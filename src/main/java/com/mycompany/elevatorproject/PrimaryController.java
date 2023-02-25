@@ -1,21 +1,14 @@
 package com.mycompany.elevatorproject;
 
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-
-import java.util.Random;
-
+import java.util.*;
+import javafx.application.Platform;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
-
 import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -28,9 +21,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 import javafx.util.Duration;
-
 
 public class PrimaryController extends TrafficGenerator{
     
@@ -38,10 +29,6 @@ public class PrimaryController extends TrafficGenerator{
     private  TranslateTransition trPass;
     private boolean add_stuff = true;
     
-     
-    
-    
-
     @FXML
     private AnchorPane stage;
     
@@ -76,17 +63,11 @@ public class PrimaryController extends TrafficGenerator{
    
     private int genOne_CHECK = 0;
     
-    
-    
-    
-    private String sp;
-    
     private int age;
     private Label errorText;
     @FXML
     private Button spawnButton2;
-    @FXML
-    private VBox back;
+    
     @FXML
     private Label errorDisplay;
     private FadeTransition fade = new FadeTransition();
@@ -118,7 +99,6 @@ public class PrimaryController extends TrafficGenerator{
     private ScaleTransition st;
     private ScaleTransition st2;
     private ParallelTransition p;
-   
     private Rectangle leftDoor;
     private Rectangle rightDoor;
     @FXML
@@ -218,19 +198,14 @@ public class PrimaryController extends TrafficGenerator{
             }
         
     }
-        
-  
-            
-    
   
     @FXML
     private void spawnBtn(ActionEvent event){
+            
             buttonEffect();
             addItems();
             
             try{
-                if(gen_currentFloors[0] == -1){
-                    
                     age = Integer.parseInt(passengerAmount.getText());
                     System.out.println("Passengers Amount created:" + age);
                     errorDisplay.setText("Passengers have been Generated...");
@@ -255,24 +230,12 @@ public class PrimaryController extends TrafficGenerator{
                     trPass.setOnFinished(finish ->{
                
                     System.out.println("AMOUNT OF FLOORS: " + destination_floors.size());
-                    elevators();
-
+                    if(ge.getIsGenerator()==true){
+                        elevators();
+                        ge.setIsGenerator(false);
+                        
+                    }
                     });
-                }else{
-                    errorDisplay.setStyle("-fx-text-fill: #fc3d03");
-                    errorDisplay.setText("Wait for the Elevators to Finish...");
-                    fade.setNode(errorDisplay);
-                    fade.setDuration(Duration.seconds(2));
-                    fade.setCycleCount(1);
-                    fade.setInterpolator(Interpolator.LINEAR);
-                    fade.setFromValue(1);
-                    fade.setToValue(0);
-                    fade.play();
-                    
-                }
-                
-            
-            
             }
             catch(NumberFormatException e){
                 errorDisplay.setStyle("-fx-text-fill: #fc3d03");
@@ -297,7 +260,7 @@ public class PrimaryController extends TrafficGenerator{
        addItems();
            
         if(spawnButton2.getText().equals("OFF")){
-            if(gen_currentFloors[0] == -1){
+            
                 spawnButton2.setText("ON");
                 spawnButton2.setStyle("-fx-background-color: #0be31a");
                 System.out.println("Auto Passenger Generator is ON.");
@@ -311,7 +274,7 @@ public class PrimaryController extends TrafficGenerator{
                 fade.setToValue(0);
                 fade.play();
                 Random r = new Random();
-                int amount = r.nextInt(10)+1;
+                int amount = 1;//r.nextInt(10)+1;
                 for(int i = 0; i < amount; i++){
                 
                     passID++;
@@ -320,27 +283,11 @@ public class PrimaryController extends TrafficGenerator{
                     passGenerator(p1);
                  
                 }
-            
                 trPass.setOnFinished(finish ->{
-               
-                System.out.println("AMOUNT OF FLOORS: " + destination_floors.size());
-                elevators();
-
+                    passGenerator_LOOP();
                 });
-            }else{
-                errorDisplay.setStyle("-fx-text-fill: #fc3d03");
-                errorDisplay.setText("Wait for the Elevators to Finish...");
-                fade.setNode(errorDisplay);
-                fade.setDuration(Duration.seconds(2));
-                fade.setCycleCount(1);
-                fade.setInterpolator(Interpolator.LINEAR);
-                fade.setFromValue(1);
-                fade.setToValue(0);
-                fade.play();
+            
                 
-            }
-            
-            
         }
         else{
             
@@ -372,33 +319,52 @@ public class PrimaryController extends TrafficGenerator{
            
         if(spawnButton2.getText().equals("OFF")){
             System.out.println("Auto Passenger Generator is OFF.");   
-        }else{
-            Random r = new Random();
-            int amount = r.nextInt(10)+1;
-            for(int i = 0; i < amount; i++){
-                
-                passID++;
-       
-                Passengers p1 = pass_Generator(passID);
-                passGenerator(p1);
-                 
-            }
+        }else{ 
             
-            trPass.setOnFinished(finish ->{
-               
-              System.out.println("AMOUNT OF FLOORS: " + destination_floors.size());
-               elevators();
+              if(ge.getIsGenerator() == true){ 
+                elevators();
+                ge.setIsGenerator(false);
+              
+              }
+                Timer timer = new Timer();
+                timer.scheduleAtFixedRate(new TimerTask(){
+                    int count = 3;
+                    public void run(){
+                        
+                       System.out.println(count);
+                       count--;
+                            
+                       if(count <= 0){
+                            timer.cancel(); 
+                            System.out.println("GENERATING PASSENGERS");
+                            Platform.runLater(() -> {
+                            Random r = new Random();
+                            int amount = 1;//r.nextInt(10)+1;
+                            for(int i = 0; i < amount; i++){
+                
+                                passID++;
+       
+                                Passengers p1 = pass_Generator(passID);
+                                passGenerator(p1);
+                 
+                            }
+                            trPass.setOnFinished(finish ->{
+                            passGenerator_LOOP();
+                            });
+                          });
+                            
+                       }
+                    }
+                },0,1000);
+              
 
-            });
+         
             
         }
                  
     }
     
-    
-    
-    
-    
+
     public void elevators(){
         for(int i = 0; i < getFloors().size(); i++){
             for(int j = 0; j < getFloors().get(i).size(); j++){
@@ -427,12 +393,12 @@ public class PrimaryController extends TrafficGenerator{
                 switch(i){
                     case 0:
                         System.out.println("General Elevator 1 has Requests");
-                        genOne_OP(getFloors(),gen_currentFloors,genElev_ONE, destination_floors);
+                        ge.genOne_UP_REQUESTS(getFloors(),gen_currentFloors,genElev,bases,genOne_DOORS);
                         break;
                     
                     case 2:
                         System.out.println("General Elevator 1 has Requests");
-                        genTwo_OP(getFloors(),gen_currentFloors,genElev_TWO, destination_floors);
+                        
                         break;
                         
                 }
@@ -443,881 +409,6 @@ public class PrimaryController extends TrafficGenerator{
         }
             
     }
-    
-    public void genOne_OP(ArrayList<ArrayList<Passengers>> floors, int[] currentFloors, ArrayList<Passengers> genElev_1, ArrayList<ArrayList<Passengers>> dest_floors){
-        
-        cf = ge.genOne_UP_REQUESTS(floors,  currentFloors, genElev_1);
-        
-        if(cf[0] == 0){
-            cf[0] = 1;
-        }
-        
-        if(cf[1] == 0){
-          genOne_OP2(floors,cf,genElev_1,dest_floors);
-        }else{
-        
-        
-        System.out.println("General Elevator 1 Next Request at Floor: " +  cf[1]);
-        
-        TranslateTransition tr = new TranslateTransition();
-        tr.setNode(genElev.get(0));
-        tr.setDuration(Duration.seconds(1));
-        tr.setCycleCount(1);
-        tr.setByY(( cf[1] - cf[0]) *-65);
-        tr.setDelay(Duration.seconds(1));
-        
-        for(int i = 0; i < genElev_1.size(); i++){
-                    
-        TranslateTransition passIN = new TranslateTransition();
-        TranslateTransition  passtypeIN = new TranslateTransition();
-        TranslateTransition  startendIN = new TranslateTransition();
-                    
-        passIN.setNode(genElev_1.get(i).getPassGUI());
-        passIN.setDelay(Duration.seconds(1));
-        passIN.setDuration(Duration.seconds(1));
-        passIN.setByY(tr.getByY());
-        passIN.setCycleCount(1);
-                    
-        passtypeIN.setNode(genElev_1.get(i).getPassTypeGUI());
-        passtypeIN.setDelay(Duration.seconds(1));
-        passtypeIN.setDuration(Duration.seconds(1));
-        passtypeIN.setByY(tr.getByY());
-        passtypeIN.setCycleCount(1);
-                    
-        startendIN.setNode(genElev_1.get(i).getStartEndGUI());
-        startendIN.setDelay(Duration.seconds(1));
-        startendIN.setDuration(Duration.seconds(1));
-        startendIN.setByY(tr.getByY());
-        startendIN.setCycleCount(1);
-                    
-                    
-        passIN.play();
-        passtypeIN.play();
-        startendIN.play();
-        }
-        
-        tr.play();
-        
-        tr.setOnFinished(finish ->{
-            cf[0] = cf[1];
-            
-            System.out.println("General Elevator 1 Currently on Floor: " + cf[0]);
-            
-            findDoors = cf[0]+ (cf[0]-1);
-            leftDoor = genOne_DOORS.get(findDoors);
-            rightDoor = genOne_DOORS.get(findDoors+1);
-        
-         
-            tt = new TranslateTransition(Duration.seconds(1),leftDoor);
-            st = new ScaleTransition(Duration.seconds(1),leftDoor);
-            tt2 = new TranslateTransition(Duration.seconds(1),rightDoor);
-            st2 = new ScaleTransition(Duration.seconds(1),rightDoor);
-         
-            tt.setByX(-10);
-            st.setByX(-1);
-        
-            tt2.setByX(10);
-            st2.setByX(-1);
-         
-            p = new ParallelTransition(tt,st,tt2,st2);
-            p.play();
-         
-            System.out.println("General Elevator 1 Doors Opening on Floor: " + currentFloors[0]);
-            p.setOnFinished(finish2 ->{
-             
-        
-        
-            for(int i = 0; i < floors.get(cf[0]-1).size(); i++){
-                Passengers p = floors.get(cf[0]-1).get(i);
-                if((p.getPassType().equals("Patient")||p.getPassType().equals("Visitor")||p.getPassType().equals("Security")) && p.getElv_Num() == 1 && p.getEndFloor() > p.getStartFloor()){
-                
-                    genElev_1.add(p);
-                    System.out.println("Passenger: " + p.toString() + " has been added to General Elevator 1.");
-                
-                }
-            
-            }
-            floors.get(cf[0]-1).removeAll(genElev_1);
-        
-            for(int i = 0; i < genElev_1.size(); i++){
-                    
-                    
-                    
-                    genElev_1.get(i).getPassGUI().setLayoutX(genElev.get(0).getX()-20);
-                    genElev_1.get(i).getPassGUI().setLayoutY(genElev.get(0).getY()-10);
-                    genElev_1.get(i).getPassTypeGUI().setLayoutX(genElev_1.get(i).getPassGUI().getX()-30);
-                    genElev_1.get(i).getPassTypeGUI().setLayoutY(genElev_1.get(i).getPassGUI().getY()-23);
-                    genElev_1.get(i).getStartEndGUI().setLayoutX(genElev_1.get(i).getPassGUI().getX()-21);
-                    genElev_1.get(i).getStartEndGUI().setLayoutY(genElev_1.get(i).getPassGUI().getY()-31);  
-                    
-                    
-        }
-        
-        //so the Passengers dont look like they are going through the floors
-        for(int i = 1; i < genOne_DOORS.size(); i++){
-            genOne_DOORS.get(i).toFront();
-        }
-        
-        for(int i = 0; i < bases.size(); i++){
-            bases.get(i).toFront();
-        }
-        
-        
-        
-        
-        for(int i = 0; i < genElev_1.size(); i++){
-            if(genElev_1.get(i).getEndFloor() == cf[0]){
-                destination_floors.get(cf[0]-1).add(genElev_1.get(i));
-                System.out.println("Passenger: " + genElev_1.get(i).toString() + " has exited Medical Elevator 1 on Floor " + cf[0]);
-            
-                genElev_1.get(i).getPassGUI().setLayoutX(genElev.get(0).getX()+30);
-                genElev_1.get(i).getPassGUI().setLayoutY(genElev.get(0).getY()+3);
-                genElev_1.get(i).getPassTypeGUI().setLayoutX(genElev_1.get(i).getPassGUI().getX()+20);
-                genElev_1.get(i).getPassTypeGUI().setLayoutY(genElev_1.get(i).getPassGUI().getY()-10);
-                genElev_1.get(i).getStartEndGUI().setLayoutX(genElev_1.get(i).getPassGUI().getX()+29);
-                genElev_1.get(i).getStartEndGUI().setLayoutY(genElev_1.get(i).getPassGUI().getY()-20);
-                
-                genElev_1.get(i).getPassGUI().toFront();
-                genElev_1.get(i).getPassTypeGUI().toFront();
-                genElev_1.get(i).getStartEndGUI().toFront();
-                
-                Random ra = new Random();
-                int gen_delay = ra.nextInt(5)+3;
-                        
-                TranslateTransition passIN = new TranslateTransition();
-                TranslateTransition passtypeIN = new TranslateTransition();
-                TranslateTransition startendIN = new TranslateTransition();
-                     
-                passIN.setNode(genElev_1.get(i).getPassGUI());
-                passIN.setDuration(Duration.seconds(gen_delay));
-                passIN.setCycleCount(1);
-                passIN.setByX(425);
-                
-                        
-                passtypeIN.setNode(genElev_1.get(i).getPassTypeGUI());
-                passtypeIN.setDuration(Duration.seconds(gen_delay));
-                passtypeIN.setCycleCount(1);
-                passtypeIN.setByX(passIN.getByX());
-                
-                        
-                startendIN.setNode(genElev_1.get(i).getStartEndGUI());
-                startendIN.setDuration(Duration.seconds(gen_delay));
-                startendIN.setCycleCount(1);
-                startendIN.setByX(passIN.getByX());
-                
-                        
-                        
-                passIN.play();
-                passtypeIN.play();
-                startendIN.play();
-                
-              
-                
-            
-            }
-        }
-        genElev_1.removeAll(dest_floors.get(cf[0]-1));
-        
-        for(int i = 0; i < floors.size(); i++){
-            for(int j = 0; j < floors.get(i).size(); j++){
-                Passengers pa = floors.get(i).get(j);
-                pa.getPassTypeGUI().toFront();
-                pa.getStartEndGUI().toFront();
-                pa.getPassGUI().toFront();
-            }
-            
-        }
-         tt = new TranslateTransition(Duration.seconds(1),leftDoor);
-         st = new ScaleTransition(Duration.seconds(1),leftDoor);
-         tt2 = new TranslateTransition(Duration.seconds(1),rightDoor);
-         st2 = new ScaleTransition(Duration.seconds(1),rightDoor);
-         
-         tt.setByX(10);
-         st.setByX(1);
-        
-         tt2.setByX(-10);
-         st2.setByX(1);
-         
-         p = new ParallelTransition(tt,st,tt2,st2);
-         p.play();
-         
-         System.out.println("General Elevator 1 Doors Closing on Floor: " + cf[0]);
-         
-         p.setOnFinished(finish3 ->{
-            if(currentFloors[0] == 8){
-            System.out.println("You have finished all Up REQUESTS");
-           genOne_OP2(floors,cf,genElev_1,dest_floors);
-           
-        }else{
-            if(genElev_1.isEmpty()==false){
-               genOne_OP(floors,cf,genElev_1,dest_floors);
-               
-            }else{
-                int a = 0;
-                for(int i = cf[0]; i <= 8; i++){
-                    for(int j = 0; j < floors.get(i-1).size(); j++){
-                        Passengers p = floors.get(i-1).get(j);
-                        if(p.getElv_Num()==1 &&(p.getPassType().equals("Patient")||p.getPassType().equals("Visitor")||p.getPassType().equals("Security")) && (p.getEndFloor() > p.getStartFloor())){
-                            a = 1;
-                            break;      
-                        }
-                    }
-                    if(a == 1){
-                        genOne_OP(floors,cf,genElev_1,dest_floors);
-                        break;
-                    }
-                
-            
-                }
-                if(a == 0){
-                    System.out.println("You have finished all Up REQUESTS");
-                    genOne_OP2(floors,cf,genElev_1,dest_floors);
-                }
-            }
-                
-               
-            }
-        });
-     });
-           
-            
-            
-        });
-        }
-    
-    
-    }
-    
-    public void genOne_OP2(ArrayList<ArrayList<Passengers>> floors, int[] currentFloors, ArrayList<Passengers> genElev_1,ArrayList<ArrayList<Passengers>> dest_floors){
-      
-        cf = ge.genOne_DOWN(floors, currentFloors, genElev_1);
-        
-        if(cf[1] == cf[0] && floors.get(cf[1]-1).isEmpty()){
-            System.out.println("THERE ARE NO OTHER REQUEST");
-            currentFloors[1] = 1;
-            
-            TranslateTransition tr = new TranslateTransition();
-            tr.setNode(genElev.get(0));
-            tr.setDuration(Duration.seconds(1));
-            tr.setCycleCount(1);
-        
-            tr.setByY((currentFloors[0]-currentFloors[1])*65);
-        
-            tr.setDelay(Duration.seconds(1));
-       
-        
-            tr.play();
-            
-            tr.setOnFinished(finish4 ->{
-                System.out.println("DONE");
-                cf[0] = -1;
-                passGenerator_LOOP();  
-            });
-            
-       }else{
-            System.out.println("General Elevator 1 Next Request at Floor: " + cf[1]);
-         
-            TranslateTransition tr = new TranslateTransition();
-            tr.setNode(genElev.get(0));
-            tr.setDuration(Duration.seconds(1));
-            tr.setCycleCount(1);
-        
-            tr.setByY((cf[0]-cf[1])*65);
-        
-            tr.setDelay(Duration.seconds(1));
-       
-        
-            tr.play();
-        
-            tr.setOnFinished(finish ->{
-            cf[0] = cf[1];
-            System.out.println("General Elevator 1 Currently on Floor: " + cf[0]);
-            
-            findDoors = cf[0]+ (cf[0]-1);
-            leftDoor = genOne_DOORS.get(findDoors);
-            rightDoor = genOne_DOORS.get(findDoors+1);
-        
-         
-            tt = new TranslateTransition(Duration.seconds(1),leftDoor);
-            st = new ScaleTransition(Duration.seconds(1),leftDoor);
-            tt2 = new TranslateTransition(Duration.seconds(1),rightDoor);
-            st2 = new ScaleTransition(Duration.seconds(1),rightDoor);
-         
-            tt.setByX(-10);
-            st.setByX(-1);
-        
-            tt2.setByX(10);
-            st2.setByX(-1);
-         
-            p = new ParallelTransition(tt,st,tt2,st2);
-            p.play();
-         
-            System.out.println("General Elevator 1 Doors Opening on Floor: " + cf[0]);
-            p.setOnFinished(finish2 ->{
-        
-            for(int i = 0; i < floors.get(currentFloors[0]-1).size(); i++){
-                Passengers p = floors.get(currentFloors[0]-1).get(i);
-                if((p.getPassType().equals("Patient")||p.getPassType().equals("Visitor")||p.getPassType().equals("Security")) && p.getElv_Num() == 1 && p.getEndFloor() < p.getStartFloor()){
-                
-                genElev_1.add(p);
-                System.out.println("Passenger: " + p.toString() + " has been added to General Elevator 1.");
-                
-            }
-            
-        }
-        floors.get(cf[0]-1).removeAll(genElev_1);
-        
-        for(int i = 0; i < genElev_1.size(); i++){
-                    
-                    genElev_1.get(i).getPassGUI().setLayoutX(genElev.get(0).getX()-20);
-                    genElev_1.get(i).getPassGUI().setLayoutY(genElev.get(0).getY()-10);
-                    genElev_1.get(i).getPassTypeGUI().setLayoutX(genElev_1.get(i).getPassGUI().getX()-30);
-                    genElev_1.get(i).getPassTypeGUI().setLayoutY(genElev_1.get(i).getPassGUI().getY()-23);
-                    genElev_1.get(i).getStartEndGUI().setLayoutX(genElev_1.get(i).getPassGUI().getX()-21);
-                    genElev_1.get(i).getStartEndGUI().setLayoutY(genElev_1.get(i).getPassGUI().getY()-31);   
-                    
-                    
-        }
-        
-        
-        
-        for(int i = 1; i < genOne_DOORS.size(); i++){
-            genOne_DOORS.get(i).toFront();
-        }
-        
-        for(int i = 0; i < bases.size(); i++){
-            bases.get(i).toFront();
-        }
-        for(int i = 0; i < floors.size(); i++){
-            for(int j = 0; j < floors.get(i).size(); j++){
-                Passengers pa = floors.get(i).get(j);
-                pa.getPassTypeGUI().toFront();
-                pa.getStartEndGUI().toFront();
-                pa.getPassGUI().toFront();
-            }
-            
-        }
-        
-         tt = new TranslateTransition(Duration.seconds(1),leftDoor);
-         st = new ScaleTransition(Duration.seconds(1),leftDoor);
-         tt2 = new TranslateTransition(Duration.seconds(1),rightDoor);
-         st2 = new ScaleTransition(Duration.seconds(1),rightDoor);
-         
-         tt.setByX(10);
-         st.setByX(1);
-        
-         tt2.setByX(-10);
-         st2.setByX(1);
-         
-         p = new ParallelTransition(tt,st,tt2,st2);
-         p.play();
-         
-         System.out.println("General Elevator 1 Doors Closing on Floor: " + cf[0]);
-         
-         p.setOnFinished(finish3 ->{
-        
-         genOne_OP3(floors,currentFloors,genElev_1,dest_floors);
-
-        });
-        
-    });
-       
- });
-         
- }
-    }
-     
-    public void genOne_OP3(ArrayList<ArrayList<Passengers>> floors, int[] currentFloors, ArrayList<Passengers> genElev_1,ArrayList<ArrayList<Passengers>> dest_floors){
-       
-       cf = ge.genOne_DOWN_REQUESTS(floors, currentFloors, genElev_1);
-       
-        TranslateTransition tr = new TranslateTransition();
-        tr.setNode(genElev.get(0));
-        tr.setDuration(Duration.seconds(1));
-        tr.setCycleCount(1);
-        tr.setByY((currentFloors[0]-currentFloors[1]) *65);
-        tr.setDelay(Duration.seconds(1));
-        
-        for(int i = 0; i < genElev_1.size(); i++){
-                    
-        TranslateTransition passIN = new TranslateTransition();
-        TranslateTransition  passtypeIN = new TranslateTransition();
-        TranslateTransition  startendIN = new TranslateTransition();
-                    
-        passIN.setNode(genElev_1.get(i).getPassGUI());
-        passIN.setDelay(Duration.seconds(1));
-        passIN.setDuration(Duration.seconds(1));
-        passIN.setByY(tr.getByY());
-        passIN.setCycleCount(1);
-                    
-        passtypeIN.setNode(genElev_1.get(i).getPassTypeGUI());
-        passtypeIN.setDelay(Duration.seconds(1));
-        passtypeIN.setDuration(Duration.seconds(1));
-        passtypeIN.setByY(tr.getByY());
-        passtypeIN.setCycleCount(1);
-                    
-        startendIN.setNode(genElev_1.get(i).getStartEndGUI());
-        startendIN.setDelay(Duration.seconds(1));
-        startendIN.setDuration(Duration.seconds(1));
-        startendIN.setByY(tr.getByY());
-        startendIN.setCycleCount(1);
-                    
-                    
-        passIN.play();
-        passtypeIN.play();
-        startendIN.play();
-        }
-        
-        tr.play();
-        
-        tr.setOnFinished(finish ->{
-            cf[0] = cf[1];
-            System.out.println("General Elevator 1 Currently on Floor: " + cf[0]);
-            
-            findDoors = cf[0]+ (cf[0]-1);
-            leftDoor = genOne_DOORS.get(findDoors);
-            rightDoor = genOne_DOORS.get(findDoors+1);
-        
-         
-            tt = new TranslateTransition(Duration.seconds(1),leftDoor);
-            st = new ScaleTransition(Duration.seconds(1),leftDoor);
-            tt2 = new TranslateTransition(Duration.seconds(1),rightDoor);
-            st2 = new ScaleTransition(Duration.seconds(1),rightDoor);
-         
-            tt.setByX(-10);
-            st.setByX(-1);
-        
-            tt2.setByX(10);
-            st2.setByX(-1);
-         
-            p = new ParallelTransition(tt,st,tt2,st2);
-            p.play();
-         
-            System.out.println("General Elevator 1 Doors Opening on Floor: " + cf[0]);
-            p.setOnFinished(finish2 ->{
-        
-            for(int i = 0; i < floors.get(cf[0]-1).size(); i++){
-                Passengers p = floors.get(cf[0]-1).get(i);
-                if((p.getPassType().equals("Patient")||p.getPassType().equals("Visitor")||p.getPassType().equals("Security")) && p.getElv_Num() == 1 && p.getEndFloor() < p.getStartFloor()){
-                
-                genElev_1.add(p);
-                System.out.println("Passenger: " + p.toString() + " has been added to General Elevator 1.");
-                
-            }
-            
-        }
-        floors.get(cf[0]-1).removeAll(genElev_1);
-        
-        for(int i = 0; i < genElev_1.size(); i++){
-                    
-                    genElev_1.get(i).getPassGUI().setLayoutX(genElev.get(0).getX()-20);
-                    genElev_1.get(i).getPassGUI().setLayoutY(genElev.get(0).getY()-10);
-                    genElev_1.get(i).getPassTypeGUI().setLayoutX(genElev_1.get(i).getPassGUI().getX()-30);
-                    genElev_1.get(i).getPassTypeGUI().setLayoutY(genElev_1.get(i).getPassGUI().getY()-23);
-                    genElev_1.get(i).getStartEndGUI().setLayoutX(genElev_1.get(i).getPassGUI().getX()-21);
-                    genElev_1.get(i).getStartEndGUI().setLayoutY(genElev_1.get(i).getPassGUI().getY()-31);   
-        }
-        
-       for(int i = 1; i < genOne_DOORS.size(); i++){
-            genOne_DOORS.get(i).toFront();
-        }
-        
-        for(int i = 0; i < bases.size(); i++){
-            bases.get(i).toFront();
-        }
-        
-        
-        for(int i = 0; i < genElev_1.size(); i++){
-            if(genElev_1.get(i).getEndFloor() == currentFloors[0]){
-                destination_floors.get(currentFloors[0]-1).add(genElev_1.get(i));
-                System.out.println("Passenger: " + genElev_1.get(i).toString() + " has exited Medical Elevator 1 on Floor " + currentFloors[0]);
-            
-                genElev_1.get(i).getPassGUI().setLayoutX(genElev.get(0).getX()+30);
-                genElev_1.get(i).getPassGUI().setLayoutY(genElev.get(0).getY()+3);
-                genElev_1.get(i).getPassTypeGUI().setLayoutX(genElev_1.get(i).getPassGUI().getX()+20);
-                genElev_1.get(i).getPassTypeGUI().setLayoutY(genElev_1.get(i).getPassGUI().getY()-10);
-                genElev_1.get(i).getStartEndGUI().setLayoutX(genElev_1.get(i).getPassGUI().getX()+29);
-                genElev_1.get(i).getStartEndGUI().setLayoutY(genElev_1.get(i).getPassGUI().getY()-20);
-                
-                genElev_1.get(i).getPassGUI().toFront();
-                genElev_1.get(i).getPassTypeGUI().toFront();
-                genElev_1.get(i).getStartEndGUI().toFront();
-                
-                Random ra = new Random();
-                int gen_delay = ra.nextInt(5)+3;
-                        
-                TranslateTransition passIN = new TranslateTransition();
-                TranslateTransition passtypeIN = new TranslateTransition();
-                TranslateTransition startendIN = new TranslateTransition();
-                     
-                passIN.setNode(genElev_1.get(i).getPassGUI());
-                passIN.setDuration(Duration.seconds(gen_delay));
-                passIN.setCycleCount(1);
-                passIN.setByX(425);
-                
-                        
-                passtypeIN.setNode(genElev_1.get(i).getPassTypeGUI());
-                passtypeIN.setDuration(Duration.seconds(gen_delay));
-                passtypeIN.setCycleCount(1);
-                passtypeIN.setByX(passIN.getByX());
-                
-                        
-                startendIN.setNode(genElev_1.get(i).getStartEndGUI());
-                startendIN.setDuration(Duration.seconds(gen_delay));
-                startendIN.setCycleCount(1);
-                startendIN.setByX(passIN.getByX());
-                
-                        
-                        
-                passIN.play();
-                passtypeIN.play();
-                startendIN.play();
-                
-              
-                
-            
-            }
-        }
-        genElev_1.removeAll(dest_floors.get(cf[0]-1));
-        
-         for(int i = 0; i < floors.size(); i++){
-            for(int j = 0; j < floors.get(i).size(); j++){
-                Passengers pa = floors.get(i).get(j);
-                pa.getPassTypeGUI().toFront();
-                pa.getStartEndGUI().toFront();
-                pa.getPassGUI().toFront();
-            }
-            
-        }
-        
-         tt = new TranslateTransition(Duration.seconds(1),leftDoor);
-         st = new ScaleTransition(Duration.seconds(1),leftDoor);
-         tt2 = new TranslateTransition(Duration.seconds(1),rightDoor);
-         st2 = new ScaleTransition(Duration.seconds(1),rightDoor);
-         
-         tt.setByX(10);
-         st.setByX(1);
-        
-         tt2.setByX(-10);
-         st2.setByX(1);
-         
-         p = new ParallelTransition(tt,st,tt2,st2);
-         p.play();
-         
-         System.out.println("General Elevator 1 Doors Closing on Floor: " + cf[0]);
-         
-         p.setOnFinished(finish3 ->{
-        
-        if(cf[0] == 1){
-            System.out.println("DONE");
-            gen_currentFloors[0] = -1;
-            passGenerator_LOOP();
-         
-        }
-        else{
-            if(genElev_1.isEmpty()==false){
-                   genOne_OP3(floors,currentFloors,genElev_1,dest_floors);
-            }else{
-                int a = 0;
-                for(int i = cf[0]; i >= 1; i--){
-                    for(int j = 0; j < floors.get(i-1).size(); j++){
-                        Passengers p = floors.get(i-1).get(j);
-                        if(p.getElv_Num()==1 && (p.getPassType().equals("Patient")||p.getPassType().equals("Visitor")||p.getPassType().equals("Security")) && (p.getEndFloor() < p.getStartFloor())){
-                            a = 1;
-                            break;      
-                        }
-                    }
-                    if(a == 1){
-                      genOne_OP3(floors,cf,genElev_1,dest_floors);
-                      break;
-                    }
-            
-                }
-                 
-                if(a == 0){
-                    System.out.println("THERE ARE NO OTHER REQUEST");
-                    cf[1] = 1;
-            
-                    TranslateTransition tr2 = new TranslateTransition();
-                    tr2.setNode(genElev.get(0));
-                    tr2.setDuration(Duration.seconds(1));
-                    tr2.setCycleCount(1);
-        
-                    tr2.setByY((cf[0]-cf[1])*65);
-        
-                    tr2.setDelay(Duration.seconds(1));
-       
-        
-                    tr2.play();
-            
-                    tr2.setOnFinished(finish4 ->{
-                        System.out.println("DONE");
-                        gen_currentFloors[0] = -1;
-                        passGenerator_LOOP();
-                    });
-
-                }
-            }
-              
-        }
-        
-        });
-         
-      });
-         
-    });
-
-         
-       
-         
-
-
-   }
-
-    public void genTwo_OP(ArrayList<ArrayList<Passengers>> floors, int[] currentFloors, ArrayList<Passengers> genElev_2, ArrayList<ArrayList<Passengers>> dest_floors){
-        
-        cf = ge.genOne_UP_REQUESTS(floors,  currentFloors, genElev_2);
-        
-        if(cf[2] == 0){
-            cf[2] = 1;
-        }
-        
-        if(cf[3] == 0){
-          genOne_OP2(floors,cf,genElev_2,dest_floors);
-        }else{
-        
-        
-        System.out.println("General Elevator 1 Next Request at Floor: " +  cf[3]);
-        
-        TranslateTransition tr = new TranslateTransition();
-        tr.setNode(genElev.get(1));
-        tr.setDuration(Duration.seconds(1));
-        tr.setCycleCount(1);
-        tr.setByY(( cf[2] - cf[3]) *-65);
-        tr.setDelay(Duration.seconds(1));
-        
-        for(int i = 0; i < genElev_2.size(); i++){
-                    
-        TranslateTransition passIN = new TranslateTransition();
-        TranslateTransition  passtypeIN = new TranslateTransition();
-        TranslateTransition  startendIN = new TranslateTransition();
-                    
-        passIN.setNode(genElev_2.get(i).getPassGUI());
-        passIN.setDelay(Duration.seconds(1));
-        passIN.setDuration(Duration.seconds(1));
-        passIN.setByY(tr.getByY());
-        passIN.setCycleCount(1);
-                    
-        passtypeIN.setNode(genElev_2.get(i).getPassTypeGUI());
-        passtypeIN.setDelay(Duration.seconds(1));
-        passtypeIN.setDuration(Duration.seconds(1));
-        passtypeIN.setByY(tr.getByY());
-        passtypeIN.setCycleCount(1);
-                    
-        startendIN.setNode(genElev_2.get(i).getStartEndGUI());
-        startendIN.setDelay(Duration.seconds(1));
-        startendIN.setDuration(Duration.seconds(1));
-        startendIN.setByY(tr.getByY());
-        startendIN.setCycleCount(1);
-                    
-                    
-        passIN.play();
-        passtypeIN.play();
-        startendIN.play();
-        }
-        
-        tr.play();
-        
-        tr.setOnFinished(finish ->{
-            cf[2] = cf[3];
-            
-            System.out.println("General Elevator 1 Currently on Floor: " + cf[2]);
-            
-            findDoors = cf[2]+ (cf[2]-1);
-            leftDoor = genOne_DOORS.get(findDoors);
-            rightDoor = genOne_DOORS.get(findDoors+1);
-        
-         
-            tt = new TranslateTransition(Duration.seconds(1),leftDoor);
-            st = new ScaleTransition(Duration.seconds(1),leftDoor);
-            tt2 = new TranslateTransition(Duration.seconds(1),rightDoor);
-            st2 = new ScaleTransition(Duration.seconds(1),rightDoor);
-         
-            tt.setByX(-10);
-            st.setByX(-1);
-        
-            tt2.setByX(10);
-            st2.setByX(-1);
-         
-            p = new ParallelTransition(tt,st,tt2,st2);
-            p.play();
-         
-            System.out.println("General Elevator 1 Doors Opening on Floor: " + currentFloors[2]);
-            p.setOnFinished(finish2 ->{
-             
-        
-        
-            for(int i = 0; i < floors.get(cf[2]-1).size(); i++){
-                Passengers p = floors.get(cf[2]-1).get(i);
-                if((p.getPassType().equals("Patient")||p.getPassType().equals("Visitor")||p.getPassType().equals("Security")) && p.getElv_Num() == 2 && p.getEndFloor() > p.getStartFloor()){
-                
-                    genElev_2.add(p);
-                    System.out.println("Passenger: " + p.toString() + " has been added to General Elevator 1.");
-                
-                }
-            
-            }
-            floors.get(cf[0]-1).removeAll(genElev_2);
-        
-            for(int i = 0; i < genElev_2.size(); i++){
-                    
-                    
-                    
-                    genElev_2.get(i).getPassGUI().setLayoutX(genElev.get(1).getX()-20);
-                    genElev_2.get(i).getPassGUI().setLayoutY(genElev.get(1).getY()-10);
-                    genElev_2.get(i).getPassTypeGUI().setLayoutX(genElev_2.get(i).getPassGUI().getX()-30);
-                    genElev_2.get(i).getPassTypeGUI().setLayoutY(genElev_2.get(i).getPassGUI().getY()-23);
-                    genElev_2.get(i).getStartEndGUI().setLayoutX(genElev_2.get(i).getPassGUI().getX()-21);
-                    genElev_2.get(i).getStartEndGUI().setLayoutY(genElev_2.get(i).getPassGUI().getY()-31);  
-                    
-                    
-        }
-        
-        //so the Passengers dont look like they are going through the floors
-        for(int i = 1; i < genOne_DOORS.size(); i++){
-            genOne_DOORS.get(i).toFront();
-        }
-        
-        for(int i = 0; i < bases.size(); i++){
-            bases.get(i).toFront();
-        }
-        
-        
-        
-        
-        for(int i = 0; i < genElev_2.size(); i++){
-            if(genElev_2.get(i).getEndFloor() == cf[2]){
-                destination_floors.get(cf[2]-1).add(genElev_2.get(i));
-                System.out.println("Passenger: " + genElev_2.get(i).toString() + " has exited Medical Elevator 1 on Floor " + cf[2]);
-            
-                genElev_2.get(i).getPassGUI().setLayoutX(genElev.get(1).getX()+30);
-                genElev_2.get(i).getPassGUI().setLayoutY(genElev.get(1).getY()+3);
-                genElev_2.get(i).getPassTypeGUI().setLayoutX(genElev_2.get(i).getPassGUI().getX()+20);
-                genElev_2.get(i).getPassTypeGUI().setLayoutY(genElev_2.get(i).getPassGUI().getY()-10);
-                genElev_2.get(i).getStartEndGUI().setLayoutX(genElev_2.get(i).getPassGUI().getX()+29);
-                genElev_2.get(i).getStartEndGUI().setLayoutY(genElev_2.get(i).getPassGUI().getY()-20);
-                
-                genElev_2.get(i).getPassGUI().toFront();
-                genElev_2.get(i).getPassTypeGUI().toFront();
-                genElev_2.get(i).getStartEndGUI().toFront();
-                
-                Random ra = new Random();
-                int gen_delay = ra.nextInt(5)+3;
-                        
-                TranslateTransition passIN = new TranslateTransition();
-                TranslateTransition passtypeIN = new TranslateTransition();
-                TranslateTransition startendIN = new TranslateTransition();
-                     
-                passIN.setNode(genElev_2.get(i).getPassGUI());
-                passIN.setDuration(Duration.seconds(gen_delay));
-                passIN.setCycleCount(1);
-                passIN.setByX(425);
-                
-                        
-                passtypeIN.setNode(genElev_2.get(i).getPassTypeGUI());
-                passtypeIN.setDuration(Duration.seconds(gen_delay));
-                passtypeIN.setCycleCount(1);
-                passtypeIN.setByX(passIN.getByX());
-                
-                        
-                startendIN.setNode(genElev_2.get(i).getStartEndGUI());
-                startendIN.setDuration(Duration.seconds(gen_delay));
-                startendIN.setCycleCount(1);
-                startendIN.setByX(passIN.getByX());
-                
-                        
-                        
-                passIN.play();
-                passtypeIN.play();
-                startendIN.play();
-                
-              
-                
-            
-            }
-        }
-        genElev_2.removeAll(dest_floors.get(cf[2]-1));
-        
-        for(int i = 0; i < floors.size(); i++){
-            for(int j = 0; j < floors.get(i).size(); j++){
-                Passengers pa = floors.get(i).get(j);
-                pa.getPassTypeGUI().toFront();
-                pa.getStartEndGUI().toFront();
-                pa.getPassGUI().toFront();
-            }
-            
-        }
-         tt = new TranslateTransition(Duration.seconds(1),leftDoor);
-         st = new ScaleTransition(Duration.seconds(1),leftDoor);
-         tt2 = new TranslateTransition(Duration.seconds(1),rightDoor);
-         st2 = new ScaleTransition(Duration.seconds(1),rightDoor);
-         
-         tt.setByX(10);
-         st.setByX(1);
-        
-         tt2.setByX(-10);
-         st2.setByX(1);
-         
-         p = new ParallelTransition(tt,st,tt2,st2);
-         p.play();
-         
-         System.out.println("General Elevator 1 Doors Closing on Floor: " + cf[0]);
-         
-         p.setOnFinished(finish3 ->{
-            if(currentFloors[0] == 8){
-            System.out.println("You have finished all Up REQUESTS");
-           //genTwo_OP2(floors,cf,genElev_2,dest_floors);
-           
-        }else{
-            if(genElev_2.isEmpty()==false){
-               //genOne_OP(floors,cf,genElev_2,dest_floors);
-               
-            }else{
-                int a = 0;
-                for(int i = cf[2]; i <= 8; i++){
-                    for(int j = 0; j < floors.get(i-1).size(); j++){
-                        Passengers p = floors.get(i-1).get(j);
-                        if(p.getElv_Num()==2 &&(p.getPassType().equals("Patient")||p.getPassType().equals("Visitor")||p.getPassType().equals("Security")) && (p.getEndFloor() > p.getStartFloor())){
-                            a = 1;
-                            break;      
-                        }
-                    }
-                    if(a == 1){
-                       // genOne_OP(floors,cf,genElev_2,dest_floors);
-                        break;
-                    }
-                
-            
-                }
-                if(a == 0){
-                    System.out.println("You have finished all Up REQUESTS");
-                    //genOne_OP2(floors,cf,genElev_2,dest_floors);
-                }
-            }
-                
-               
-            }
-        });
-     });
-           
-            
-            
-        });
-        }
-    
-    
-    }
-    
     
     public void passGenerator(Passengers newp){
         Random r = new Random();

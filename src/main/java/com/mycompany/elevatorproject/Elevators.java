@@ -10,6 +10,7 @@ import javafx.scene.shape.Rectangle;
     private ArrayList<ArrayList<Passengers>> destination_floors = new ArrayList();
     private int max_capacity;
     private int max_floors;
+    private boolean isGenerator;
     
     
     
@@ -26,27 +27,20 @@ import javafx.scene.shape.Rectangle;
   
         max_capacity = 0;
         max_floors = 8;
+        isGenerator = true;
        
     }
     
-    
-    Elevators(int max_capacity, int max_floors){
-        this.max_capacity = max_capacity;
-        this.max_floors = max_floors;
-        
-       
-    }
-    
-    Elevators(Elevators e){
-        
-        this.max_capacity = e.max_capacity;
-        this.max_floors = e.max_floors;
-        
-        
-    }
     
     abstract public void elevators(ArrayList<ArrayList<Passengers>> fl, ArrayList<Rectangle> r);
     
+    public boolean getIsGenerator(){
+        return isGenerator;
+    }
+    
+    public void setIsGenerator(boolean a){
+        isGenerator = a;
+    }
     public ArrayList<ArrayList<Passengers>> getDestination_Floors(){
         return destination_floors;
     }
@@ -67,4 +61,6 @@ import javafx.scene.shape.Rectangle;
     public void setMax_Capacity(int max_capacity){
         this.max_capacity = max_capacity;
     }
+    
+    
 }
