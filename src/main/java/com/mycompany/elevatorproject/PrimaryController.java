@@ -12,10 +12,12 @@ import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -137,7 +139,20 @@ public class PrimaryController extends TrafficGenerator{
     @FXML
     private Rectangle roof;
     private General_Elevator ge = new General_Elevator();
-    int[] cf;
+    @FXML
+    private TextField autoPassAmount;
+    @FXML
+    private ComboBox<?> intervalBox;
+    @FXML
+    private CheckBox sec1;
+    @FXML
+    private CheckBox vis1;
+    @FXML
+    private CheckBox pat1;
+    @FXML
+    private CheckBox med1;
+    @FXML
+    private CheckBox sup1;
     
         
     public void addItems(){
@@ -630,6 +645,7 @@ public class PrimaryController extends TrafficGenerator{
             
         });
     }
+
 
 }
     
