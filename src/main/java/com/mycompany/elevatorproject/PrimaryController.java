@@ -15,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
@@ -72,7 +73,7 @@ public class PrimaryController extends TrafficGenerator{
     
     @FXML
     private Label errorDisplay;
-    private FadeTransition fade = new FadeTransition();
+    private FadeTransition fade;
     @FXML
     private Rectangle base2;
     @FXML
@@ -142,8 +143,6 @@ public class PrimaryController extends TrafficGenerator{
     @FXML
     private TextField autoPassAmount;
     @FXML
-    private ComboBox<?> intervalBox;
-    @FXML
     private CheckBox sec1;
     @FXML
     private CheckBox vis1;
@@ -153,14 +152,17 @@ public class PrimaryController extends TrafficGenerator{
     private CheckBox med1;
     @FXML
     private CheckBox sup1;
+    @FXML
+    private TextField intervalbox;
+    private int autoPass;
+    private int interval;
+    @FXML
+    private RadioButton randFloors;
+    
     
         
     public void addItems(){
-        if(destination_floors.size()!= 8){
-                    for(int i = 0; i < 8; i++){
-                        destination_floors.add(new ArrayList<Passengers>());
-                    }
-                }
+        
             
             
             if(genElev.size() != 5){
@@ -256,7 +258,7 @@ public class PrimaryController extends TrafficGenerator{
                 errorDisplay.setStyle("-fx-text-fill: #fc3d03");
                 errorDisplay.setText("ERROR! Please Enter Only Integers...");
                 System.out.println("Please enter only Integers.");
-                
+                fade = new FadeTransition();
                 fade.setNode(errorDisplay);
                 fade.setDuration(Duration.seconds(2));
                 fade.setCycleCount(1);
@@ -281,6 +283,7 @@ public class PrimaryController extends TrafficGenerator{
                 System.out.println("Auto Passenger Generator is ON.");
                 errorDisplay.setText("Auto Passenger Generator is ON");
                 errorDisplay.setStyle("-fx-text-fill: #46e38f");
+                fade = new FadeTransition();
                 fade.setNode(errorDisplay);
                 fade.setDuration(Duration.seconds(2));
                 fade.setCycleCount(1);
@@ -288,29 +291,16 @@ public class PrimaryController extends TrafficGenerator{
                 fade.setFromValue(1);
                 fade.setToValue(0);
                 fade.play();
-                Random r = new Random();
-                int amount = 1;//r.nextInt(10)+1;
-                for(int i = 0; i < amount; i++){
-                
-                    passID++;
-       
-                    Passengers p1 = pass_Generator(passID);
-                    passGenerator(p1);
-                 
-                }
-                trPass.setOnFinished(finish ->{
-                    passGenerator_LOOP();
-                });
-            
-                
+                passGenerator_LOOP();      
         }
         else{
             
             spawnButton2.setText("OFF");
             spawnButton2.setStyle("-fx-background-color:   #bf1b1b");
-            System.out.println("Auto Passenger Generator is OFF.");
+            System.out.println("Auto Passenger Generator is OFF");
             errorDisplay.setStyle("-fx-text-fill: #fc3d03");
                 errorDisplay.setText("Auto Passenger Generator is OFF.");
+                fade = new FadeTransition();
                 fade.setNode(errorDisplay);
                 fade.setDuration(Duration.seconds(2));
                 fade.setCycleCount(1);
@@ -334,27 +324,30 @@ public class PrimaryController extends TrafficGenerator{
            
         if(spawnButton2.getText().equals("OFF")){
             System.out.println("Auto Passenger Generator is OFF.");   
-        }else{ 
-            
-              if(ge.getIsGenerator() == true){ 
-                elevators();
-                ge.setIsGenerator(false);
-              
-              }
-                Timer timer = new Timer();
-                timer.scheduleAtFixedRate(new TimerTask(){
-                    int count = 3;
-                    public void run(){
+        }else{
+              try{
+                    autoPass = Integer.parseInt(autoPassAmount.getText());
+                    System.out.println("Auto Generate Passenger Amount: " + autoPass);
+                    interval = Integer.parseInt(intervalbox.getText());
+                    System.out.println("Interval Input: " + interval);
+                    
+                    if((autoPass > 0 && autoPass <= 20) && (interval > 0 && interval <= 5)){
+                         Timer timer = new Timer();
+                         timer.scheduleAtFixedRate(new TimerTask(){
+                            int count = interval;
+                            public void run(){
                         
-                       System.out.println(count);
-                       count--;
-                            
-                       if(count <= 0){
+                            System.out.println(count);
+                            count--;
+                       
+                       
+                            if(count <= 0){
+                           
                             timer.cancel(); 
                             System.out.println("GENERATING PASSENGERS");
                             Platform.runLater(() -> {
-                            Random r = new Random();
-                            int amount = 1;//r.nextInt(10)+1;
+                            //Random r = new Random();
+                            int amount = autoPass;//r.nextInt(10)+1;
                             for(int i = 0; i < amount; i++){
                 
                                 passID++;
@@ -364,13 +357,60 @@ public class PrimaryController extends TrafficGenerator{
                  
                             }
                             trPass.setOnFinished(finish ->{
-                            passGenerator_LOOP();
+                                if(ge.getIsGenerator() == true){ 
+                                    elevators();
+                                    ge.setIsGenerator(false);
+              
+                                }
+                                passGenerator_LOOP();
                             });
                           });
                             
                        }
                     }
                 },0,1000);
+                    }else{
+                        spawnButton2.setText("OFF");
+                        spawnButton2.setStyle("-fx-background-color:   #bf1b1b");
+                        System.out.println("Auto Passenger Generator is OFF");
+                        errorDisplay.setStyle("-fx-text-fill: #fc3d03");
+                        errorDisplay.setText("ERROR! One or More Textfield Input is Invalid");
+                        System.out.println("Please enter only Integers.");
+                        fade = new FadeTransition();
+                        fade.setNode(errorDisplay);
+                        fade.setDuration(Duration.seconds(2));
+                        fade.setCycleCount(1);
+                        fade.setInterpolator(Interpolator.LINEAR);
+                        fade.setFromValue(1);
+                        fade.setToValue(0);
+                        fade.play();
+                    }
+                    
+            
+                    
+            }
+            catch(NumberFormatException e){
+                spawnButton2.setText("OFF");
+                spawnButton2.setStyle("-fx-background-color:   #bf1b1b");
+                System.out.println("Auto Passenger Generator is OFF");
+                errorDisplay.setStyle("-fx-text-fill: #fc3d03");
+                errorDisplay.setText("ERROR! One or More Textfield Input is Invalid");
+                System.out.println("Please enter only Integers.");
+                fade = new FadeTransition();
+                fade.setNode(errorDisplay);
+                fade.setDuration(Duration.seconds(2));
+                fade.setCycleCount(1);
+                fade.setInterpolator(Interpolator.LINEAR);
+                fade.setFromValue(1);
+                fade.setToValue(0);
+                fade.play();
+                
+            }  
+           
+            
+               
+           
+              
               
 
          
@@ -644,6 +684,104 @@ public class PrimaryController extends TrafficGenerator{
             spawnButton.setScaleY(0.90);
             
         });
+    }
+
+    @FXML
+    private void securityBOX(ActionEvent event) {
+         if(sec1.isSelected()){
+            sec1.setSelected(true);
+            
+        }else{
+            sec1.setSelected(false);
+        }
+        
+       
+        if(randFloors.isSelected()&&sec1.isSelected()){
+            randFloors.setSelected(false);
+        }
+        
+    }
+
+    @FXML
+    private void visitorBOX(ActionEvent event) {
+        
+        if(vis1.isSelected()){
+            vis1.setSelected(true);
+            
+        }else{
+            vis1.setSelected(false);
+        }
+        
+       
+        if(randFloors.isSelected()&&vis1.isSelected()){
+            randFloors.setSelected(false);
+        }
+        
+        
+    }
+
+    @FXML
+    private void patientBOX(ActionEvent event) {
+        if(pat1.isSelected()){
+            pat1.setSelected(true);
+            
+        }else{
+            pat1.setSelected(false);
+        }
+        
+       
+        if(randFloors.isSelected()&&pat1.isSelected()){
+            randFloors.setSelected(false);
+        }
+    }
+
+    @FXML
+    private void medicalBOX(ActionEvent event) {
+        if(med1.isSelected()){
+            med1.setSelected(true);
+            
+        }else{
+            med1.setSelected(false);
+        }
+        
+       
+        if(randFloors.isSelected()&&med1.isSelected()){
+            randFloors.setSelected(false);
+        }
+    }
+
+    @FXML
+    private void supportBOX(ActionEvent event) {
+        if(sup1.isSelected()){
+            sup1.setSelected(true);
+            
+        }else{
+            sup1.setSelected(false);
+        }
+        
+       
+        if(randFloors.isSelected()&&sup1.isSelected()){
+            randFloors.setSelected(false);
+        }
+    }
+
+    @FXML
+    private void randFloors_BOX(ActionEvent event) {
+        CheckBox[] chkBox = {sec1,vis1,pat1,med1,sup1};
+        if(randFloors.isSelected()){
+            randFloors.setSelected(true);
+             for(int i = 0; i < chkBox.length; i++){
+                if(chkBox[i].isSelected()){
+                    chkBox[i].setSelected(false);
+                    
+                }
+            }
+            
+        }else{
+            randFloors.setSelected(false);
+        }
+        
+       
     }
 
 
