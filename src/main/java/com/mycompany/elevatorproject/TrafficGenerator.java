@@ -3,129 +3,405 @@ package com.mycompany.elevatorproject;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
+
 
 public class TrafficGenerator {
     
-    
-    
-    private ArrayList<ArrayList<Passengers>> floors = new ArrayList<ArrayList<Passengers>>();
+    private ArrayList<ArrayList<Passengers>> floors = new ArrayList();
     private int start_floor;
     private int end_floor;
     private int gen_elv_num;
     private int med_elv_num;
     private int sec_elv_num;
-    private Passengers p = new Passengers();
-    private String passenger_type;
+    MedicalStaff ms;
+    Patient p;
+    SupportStaff sp; 
+    Visitor v;
+    SecurityStaff st;
+   
     
-    private Rectangle b1;
-    private Label l1;
-    private Label l2;
-    
+     
     TrafficGenerator(){
-    floors.add(new ArrayList<Passengers>());
-    floors.add(new ArrayList<Passengers>());
-    floors.add(new ArrayList<Passengers>());
-    floors.add(new ArrayList<Passengers>());
-    floors.add(new ArrayList<Passengers>());
-    floors.add(new ArrayList<Passengers>());
-    floors.add(new ArrayList<Passengers>());
-    floors.add(new ArrayList<Passengers>());
-    start_floor = 0;
-    end_floor = 0;
-    passenger_type = "";
+        floors.add(new ArrayList<Passengers>());
+        floors.add(new ArrayList<Passengers>());
+        floors.add(new ArrayList<Passengers>());
+        floors.add(new ArrayList<Passengers>());
+        floors.add(new ArrayList<Passengers>());
+        floors.add(new ArrayList<Passengers>());
+        floors.add(new ArrayList<Passengers>());
+        floors.add(new ArrayList<Passengers>());
     
     }
    
     
     
-    public Passengers pass_Generator(int pass_id){
-      
+    public Passengers pass_Generator(int id_Counter){
+     
+    
+     Passengers passenger = null;  
+     ms = new MedicalStaff();
+     p = new Patient();
+     sp = new SupportStaff();
+     v = new Visitor();
+     st = new SecurityStaff();
+    
         Random r = new Random();
         double n = r.nextDouble();
-        start_floor = r.nextInt(8)+1;
-        end_floor = r.nextInt(8)+1;
-        gen_elv_num = 1;//r.nextInt(5)+1;
-        sec_elv_num = r.nextInt(8)+1;
-        med_elv_num = 6;//r.nextInt(3)+6;
+        start_floor = r.nextInt(8); 
+        end_floor = r.nextInt(8);
+        gen_elv_num = 2;//r.nextInt(5)+1;
+        sec_elv_num = r.nextInt(2)+1;//r.nextInt(8)+1;
+        med_elv_num = r.nextInt(3)+6;
         
-        if(n < 0.0){//30% Support Staff
+        while(start_floor == end_floor){
+             end_floor = r.nextInt(8); 
+        }
+        /*
+        System.out.println("=====================");
+        System.out.println("Probabilities: ");
+        System.out.println("=====================");
+        System.out.println("Visitor: " + v.getPassProbability());
+        System.out.println("Patient: " + p.getPassProbability());
+        System.out.println("SupportStaff: " + sp.getPassProbability());
+        System.out.println("MedicalStaff: " + ms.getPassProbability());
+        System.out.println("SecurityStaff: " + st.getPassProbability());
+        System.out.println("=====================");
+        */
+        if(n <  0/*v.getPassProbability()*/){// .15 or 15% Visitor Condition n < 0.15
                
-                passenger_type = "Support";
-                while(start_floor == end_floor){
-                    end_floor = r.nextInt(8)+1; 
-                }
-                b1 = new Rectangle();
-                l1 = new Label();
-                l2 = new Label();
+                v.setStartFloor(start_floor);
+                v.setEndFloor(end_floor);
+                v.setElv_Num(gen_elv_num); 
+                v.setPassID(id_Counter);
                 
-                return new Passengers(passenger_type, pass_id, start_floor, end_floor,  med_elv_num,b1,l1,l2); 
-        } 
-        else if(n < 0.50){//25% Patient 0.55 //Testing Elevator Logic with one passenger
-                passenger_type = "Patient";
-                while(start_floor == end_floor){
-                    end_floor = r.nextInt(8)+1; 
-                }
-                b1 = new Rectangle();
-                l1 = new Label();
-                l2 = new Label();
-                floors.get(start_floor-1).add(new Passengers(passenger_type, pass_id, start_floor, end_floor,  gen_elv_num,b1 ,l1,l2));
-
-                return new Passengers(passenger_type, pass_id, start_floor, end_floor,  gen_elv_num,b1 ,l1,l2); 
-        } 
-       
-        else if(n < 0.0){//20% Medical Staff 0.75
-               passenger_type = "Medical";
-               while(start_floor == end_floor){
-                    end_floor = r.nextInt(8)+1; 
-                }
-               
-                b1 = new Rectangle();
-                l1 = new Label();
-                l2 = new Label();
-                floors.get(start_floor-1).add(new Passengers(passenger_type, pass_id, start_floor, end_floor,  med_elv_num,b1 ,l1,l2));
-
-                return new Passengers(passenger_type, pass_id, start_floor, end_floor,  med_elv_num,b1,l1,l2); 
-        } 
-        else if(n < 0.99){//15% Visitor 0.90
-               passenger_type = "Visitor";
-               while(start_floor == end_floor){
-                    end_floor = r.nextInt(8)+1; 
-                }
-               
-         b1 = new Rectangle();
-                l1 = new Label();
-                l2 = new Label();
-                floors.get(start_floor-1).add(new Passengers(passenger_type, pass_id, start_floor, end_floor,  gen_elv_num,b1 ,l1,l2));
-
-       
-                return new Passengers(passenger_type, pass_id, start_floor, end_floor,  gen_elv_num,b1 ,l1,l2); 
-        } 
-        else{//Security Staff
-                passenger_type = "Security";
-                while(start_floor == end_floor){
-                    end_floor = r.nextInt(8)+1; 
-                }
-              b1 = new Rectangle();
-                l1 = new Label();
-                l2 = new Label();
+                floors.get(start_floor).add(v);
                 
-                floors.get(start_floor-1).add(new Passengers(passenger_type, pass_id, start_floor, end_floor,  sec_elv_num,b1 ,l1,l2));
-                return new Passengers(passenger_type, pass_id, start_floor, end_floor,  sec_elv_num,b1 ,l1,l2); 
+                System.out.println(v.toString());
+                
+                passenger = v;
+        }else if(n < 0/*v.getPassProbability() + p.getPassProbability()*/){// .25 or 25% Patient Condition n < 0.40
+               
+                p.setStartFloor(start_floor);
+                p.setEndFloor(end_floor);
+                p.setElv_Num(gen_elv_num);  
+                p.setPassID(id_Counter);
+                floors.get(start_floor).add(p);
+                
+                System.out.println(p.toString());
+                
+                passenger = p;
+        
+        }else if(n < 0/*v.getPassProbability() + p.getPassProbability()+sp.getPassProbability()*/  ){//.30 or 30% Support Staff Condition n < .70           
+                
+                sp.setStartFloor(start_floor);
+                sp.setEndFloor(end_floor);
+                sp.setElv_Num(med_elv_num);
+                sp.setPassID(id_Counter);
+                floors.get(start_floor).add(sp);
+                
+                System.out.println(sp.toString());
+                
+                passenger = sp; 
+                
+        }else if(n < 0/*v.getPassProbability() + p.getPassProbability()+sp.getPassProbability()  + ms.getPassProbability()*/){//.20 or 20% Medical Staff  Condition n < 0.90
+               
+                ms.setStartFloor(start_floor);
+                ms.setEndFloor(end_floor);
+                ms.setElv_Num(med_elv_num);
+                ms.setPassID(id_Counter);
+                floors.get(start_floor).add(ms);
+                
+                System.out.println(ms.toString());
+                
+                passenger = ms;
+       
+        }else{//Security Staff
+                
+                st.setStartFloor(start_floor);
+                st.setEndFloor(end_floor);
+                st.setElv_Num(sec_elv_num); 
+                st.setPassID(id_Counter);
+                floors.get(start_floor).add(st);
+                
+                System.out.println(st.toString());
+                
+                passenger = st;
+                
         } 
+        
+        return passenger;
         
     }
   
-    public ArrayList<ArrayList<Passengers>> getFloors(){
-        return floors;
+    
+    
+    public Passengers pass_Generator2(boolean checkRandFloor, boolean checkRandType, String passType, int startFloorInput, int endFloorInput, int idCounter){
+        
+        System.out.println("pass_Generator2 method called");
+        System.out.println("Randomize Floors: " + checkRandFloor);
+        System.out.println("Randomize Type: "+ checkRandType);
+        System.out.println("Custom Passenger Type: "+ passType);
+        System.out.println("Custom StartFloor: " + startFloorInput);
+        System.out.println("Custom EndFloor: " + endFloorInput);
+        System.out.println("Passenger ID: "+ idCounter);
+        
+        Passengers passenger = null; 
+        ms = new MedicalStaff();
+        p = new Patient();
+        sp = new SupportStaff();
+        v = new Visitor();
+        st = new SecurityStaff();
+    
+        Random r = new Random();
+        double n = r.nextDouble();
+        start_floor = r.nextInt(8); 
+        end_floor = r.nextInt(8);
+        gen_elv_num = r.nextInt(5)+1;
+        sec_elv_num = r.nextInt(8)+1;
+        med_elv_num = r.nextInt(3)+6;
+        
+        while(start_floor == end_floor){
+             end_floor = r.nextInt(8); 
+        }
+        
+        /*
+        Conditions:
+        if randomize floors and randomize type is true
+        if randomize floors true and randmoize type is false
+        if randmoize type is true and randmoize floor is false
+        if both are false
+        
+        */
+        
+        
+        if(checkRandFloor && !checkRandType){
+            switch(passType){
+                case "Security":
+                    st.setStartFloor(start_floor);
+                    st.setEndFloor(end_floor);
+                    st.setElv_Num(sec_elv_num); 
+                    st.setPassID(idCounter);
+                    floors.get(start_floor).add(st);
+                
+                    System.out.println(st.toString());
+                    
+                    passenger = st;
+                    break;
+                    
+                    
+                case "Patient":
+                    
+                    p.setStartFloor(start_floor);
+                    p.setEndFloor(end_floor);
+                    p.setElv_Num(gen_elv_num);  
+                    p.setPassID(idCounter);
+                    floors.get(start_floor).add(p);
+                
+                    System.out.println(p.toString());
+                    passenger = p;
+                    break;
+                    
+                case "Visitor":
+                    
+                    v.setStartFloor(start_floor);
+                    v.setEndFloor(end_floor);
+                    v.setElv_Num(gen_elv_num); 
+                    v.setPassID(idCounter);
+                
+                    floors.get(start_floor).add(v);
+                
+                    System.out.println(v.toString());
+                    passenger = v;
+                    break;
+                 
+                case "Medical":
+                    
+                    ms.setStartFloor(start_floor);
+                    ms.setEndFloor(end_floor);
+                    ms.setElv_Num(med_elv_num);
+                    ms.setPassID(idCounter);
+                    floors.get(start_floor).add(ms);
+                
+                    System.out.println(ms.toString());
+                    passenger = ms;
+                    break;
+                    
+                
+                case "Support":
+                    
+                    sp.setStartFloor(start_floor);
+                    sp.setEndFloor(end_floor);
+                    sp.setElv_Num(med_elv_num);
+                    sp.setPassID(idCounter);
+                    floors.get(start_floor).add(sp);
+                
+                    System.out.println(sp.toString());
+                    passenger = sp;
+                    break;
+                    
+                 
+                default:
+                    System.out.println("NO PASSENGER TYPE EXIST");
+                    break;
+            }
+        }
+        
+        if(!checkRandFloor && checkRandType){
+            
+            if(n <  v.getPassProbability()){// .15 or 15% Visitor Condition n < 0.15
+               
+                v.setStartFloor(startFloorInput);
+                v.setEndFloor(endFloorInput);
+                v.setElv_Num(gen_elv_num); 
+                v.setPassID(idCounter);
+                
+                floors.get(startFloorInput).add(v);
+                
+                System.out.println(v.toString());
+                passenger = v;
+                
+        }else if(n < v.getPassProbability() + p.getPassProbability()){// .25 or 25% Patient Condition n < 0.40
+               
+                p.setStartFloor(startFloorInput);
+                p.setEndFloor(endFloorInput);
+                p.setElv_Num(gen_elv_num);  
+                p.setPassID(idCounter);
+                floors.get(startFloorInput).add(p);
+                
+                System.out.println(p.toString());
+                passenger = p;
+                
+        
+        }else if(n < v.getPassProbability() + p.getPassProbability()+sp.getPassProbability() ){//.30 or 30% Support Staff Condition n < .70           
+                
+                sp.setStartFloor(startFloorInput);
+                sp.setEndFloor(endFloorInput);
+                sp.setElv_Num(med_elv_num);
+                sp.setPassID(idCounter);
+                floors.get(startFloorInput).add(sp);
+                
+                System.out.println(sp.toString());
+                
+                passenger = sp; 
+                
+        }else if(n < v.getPassProbability() + p.getPassProbability()+sp.getPassProbability()  + ms.getPassProbability()){//.20 or 20% Medical Staff  Condition n < 0.90
+               
+                ms.setStartFloor(startFloorInput);
+                ms.setEndFloor(endFloorInput);
+                ms.setElv_Num(med_elv_num);
+                ms.setPassID(idCounter);
+                floors.get(startFloorInput).add(ms);
+                
+                System.out.println(ms.toString());
+                
+                passenger = ms;
+       
+        }else{//Security Staff
+                
+                st.setStartFloor(startFloorInput);
+                st.setEndFloor(endFloorInput);
+                st.setElv_Num(sec_elv_num); 
+                st.setPassID(idCounter);
+                floors.get(startFloorInput).add(st);
+                
+                System.out.println(st.toString());
+                
+                passenger = st;
+                
+            } 
+            
+        }
+        
+        if(!checkRandFloor  && !checkRandType){
+             switch(passType){
+                case "Security":
+                    st.setStartFloor(startFloorInput);
+                    st.setEndFloor(endFloorInput);
+                    st.setElv_Num(sec_elv_num); 
+                    st.setPassID(idCounter);
+                    floors.get(startFloorInput).add(st);
+                
+                    System.out.println(st.toString());
+                    passenger = st;
+                    break;
+                    
+                    
+                case "Patient":
+                    
+                    p.setStartFloor(startFloorInput);
+                    p.setEndFloor(endFloorInput);
+                    p.setElv_Num(gen_elv_num);  
+                    p.setPassID(idCounter);
+                    floors.get(startFloorInput).add(p);
+                
+                    System.out.println(p.toString());
+                    passenger = p;
+                    break;
+                
+                       
+                case "Visitor":
+                    
+                    v.setStartFloor(startFloorInput);
+                    v.setEndFloor(endFloorInput);
+                    v.setElv_Num(gen_elv_num); 
+                    v.setPassID(idCounter);
+                
+                    floors.get(startFloorInput).add(v);
+                
+                    System.out.println(v.toString());
+                    passenger = v;
+                    break;
+                 
+                case "Medical":
+                    
+                    ms.setStartFloor(startFloorInput);
+                    ms.setEndFloor(endFloorInput);
+                    ms.setElv_Num(med_elv_num);
+                    ms.setPassID(idCounter);
+                    floors.get(startFloorInput).add(ms);
+                
+                    System.out.println(ms.toString());
+                    passenger = ms;
+                    break;
+                
+                case "Support":
+                    
+                    sp.setStartFloor(startFloorInput);
+                    sp.setEndFloor(endFloorInput);
+                    sp.setElv_Num(med_elv_num);
+                    sp.setPassID(idCounter);
+                    floors.get(startFloorInput).add(sp);
+                
+                    System.out.println(sp.toString());
+                    passenger = sp;
+                    break;
+                    
+                 
+                default:
+                    System.out.println("NO PASSENGER TYPE EXIST");
+                    break;
+            }
+            
+        }
+        
+        return passenger;
     }
     
-    
+     /**
+     * @return the floors
+     */
+    public ArrayList<ArrayList<Passengers>> getFloors() {
+        return floors;
+    }
+
+    /**
+     * @param floors the floors to set
+     */
+    public void setFloors(ArrayList<ArrayList<Passengers>> floors) {
+        this.floors = floors;
+    }
+
 }
 

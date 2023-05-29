@@ -1,32 +1,38 @@
 
 package com.mycompany.elevatorproject;
 
-
-import java.util.Random;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Rectangle;
 
- public class Passengers {
+abstract public class Passengers {
     
-    private String passType;
-    private int startFloor;
-    private int endFloor;
-    private int passID;
-    private int elv_num;
-    private Rectangle passGUI;
-    private Label passtypeGUI;
-    private Label startendGUI;
+    protected String passType;
+    protected double passProbability;
+    protected int startFloor;
+    protected int endFloor;
+    protected int passID;
+    protected int elv_num;
+    protected Rectangle passGUI;
+    protected Label passtypeGUI;
+    protected Label startendGUI;
+    private double travelTime;
     
     
     Passengers(){
+        
         passType = "Passenger Type";
-        passID = 0;
-        startFloor = 0;
-        endFloor = 0;
-        elv_num = 0;  
+        startFloor = -1;
+        endFloor = -1;
+        passID = -1;
+        elv_num = 0;
+        passGUI = new Rectangle();
+         passtypeGUI = new Label();
+         startendGUI = new Label(); 
+         passProbability = 0.0;
+         travelTime = 0;
     }
     
-    Passengers(String passType,int passID, int startFloor, int endFloor,int elv_num, Rectangle passGUI, Label passtypeGUI, Label startendGUI){
+    Passengers(String passType,int passID, int startFloor, int endFloor,int elv_num, Rectangle passGUI, Label passtypeGUI, Label startendGUI, double passProbability,double travelTime){
         
         this.passType = passType;
         this.passID = passID;
@@ -36,6 +42,8 @@ import javafx.scene.shape.Rectangle;
         this.passGUI = passGUI;
         this.passtypeGUI = passtypeGUI;
         this.startendGUI = startendGUI;
+        this.passProbability = passProbability;
+        this.travelTime = travelTime;
         
     }
     
@@ -47,6 +55,7 @@ import javafx.scene.shape.Rectangle;
         this.passGUI = p.passGUI;
         this.passtypeGUI = p.passtypeGUI;
         this.startendGUI = p.startendGUI;
+        this.passProbability = p.passProbability;
     }
     public Rectangle getPassGUI(){
         return passGUI;
@@ -133,8 +142,37 @@ import javafx.scene.shape.Rectangle;
     @Override
     public String toString(){
         
-        return(getPassType() + "(iD:" + getPassID()+ ")" + "[" + getStartFloor() + " => " + getEndFloor() + "]"+"Elevator#:"+getElv_Num());
+        return(passType + "(iD:" + passID+ ")" + "[" + startFloor + " => " + endFloor + "]"+"Elevator#:"+elv_num);
     }
 
+    /**
+     * @return the passProbability
+     */
+    public double getPassProbability() {
+        return passProbability;
+    }
+
+    /**
+     * @param passProbability the passProbability to set
+     */
+    public void setPassProbability(double passProbability) {
+        this.passProbability = passProbability;
+    }
+
+    /**
+     * @return the travelTime
+     */
+    public double getTravelTime() {
+        return travelTime;
+    }
+
+    /**
+     * @param travelTime the travelTime to set
+     */
+    public void setTravelTime(double travelTime) {
+        this.travelTime = travelTime;
+    }
+
+   
 }
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="700.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.elevatorproject.StatsKeeperPopUpController">
+   <children>
+      <Label layoutX="220.0" prefHeight="61.0" prefWidth="274.0" text="Statistics Keeper" textFill="WHITE" underline="true">
+         <font>
+            <Font name="Arial Bold" size="33.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="31.0" layoutY="61.0" prefHeight="45.0" prefWidth="638.0" text="ID: 00 | Passenger Type: Passenger | Starting Floor: 0 | End Floor: 0 | Elevator #: 1 | TravelTime: 100 sec" textFill="WHITE" />
+      <Label alignment="CENTER" layoutX="31.0" layoutY="106.0" prefHeight="45.0" prefWidth="638.0" text="ID: 00 | Passenger Type: Passenger | Starting Floor: 0 | End Floor: 0 | Elevator #: 1 | TravelTime: 100 sec" textFill="WHITE" />
+      <Label alignment="CENTER" layoutX="31.0" layoutY="151.0" prefHeight="45.0" prefWidth="638.0" text="ID: 00 | Passenger Type: Passenger | Starting Floor: 0 | End Floor: 0 | Elevator #: 1 | TravelTime: 100 sec" textFill="WHITE" />
+      <Label alignment="CENTER" layoutX="31.0" layoutY="196.0" prefHeight="45.0" prefWidth="638.0" text="ID: 00 | Passenger Type: Passenger | Starting Floor: 0 | End Floor: 0 | Elevator #: 1 | TravelTime: 100 sec" textFill="WHITE" />
+      <Label alignment="CENTER" layoutX="31.0" layoutY="241.0" prefHeight="45.0" prefWidth="638.0" text="ID: 00 | Passenger Type: Passenger | Starting Floor: 0 | End Floor: 0 | Elevator #: 1 | TravelTime: 100 sec" textFill="WHITE" />
+      <Label alignment="CENTER" layoutX="31.0" layoutY="286.0" prefHeight="45.0" prefWidth="638.0" text="ID: 00 | Passenger Type: Passenger | Starting Floor: 0 | End Floor: 0 | Elevator #: 1 | TravelTime: 100 sec" textFill="WHITE" />
+      <Label alignment="CENTER" layoutX="31.0" layoutY="331.0" prefHeight="45.0" prefWidth="638.0" text="ID: 00 | Passenger Type: Passenger | Starting Floor: 0 | End Floor: 0 | Elevator #: 1 | TravelTime: 100 sec" textFill="WHITE" />
+   </children>
+</AnchorPane>

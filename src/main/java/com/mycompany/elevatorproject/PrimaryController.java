@@ -6,179 +6,108 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
-import javafx.animation.ParallelTransition;
-import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class PrimaryController extends TrafficGenerator{
     
-    private int passID=0;
-    private  TranslateTransition trPass;
-    private boolean add_stuff = true;
-    
     @FXML
     private AnchorPane stage;
+    @FXML
+    private Button spawnButton,spawnButton2;
     
-    @FXML
-    private Button spawnButton;
-    @FXML
-    private Rectangle genElev1;
-    @FXML
-    private Rectangle genElev2;
-    @FXML
-    private Rectangle genElev3;
-    @FXML
-    private Rectangle genElev4;
-    @FXML
-    private Rectangle genElev5;
-    @FXML
-    private Rectangle medElev1;
-    @FXML
-    private Rectangle medElev2;
-    @FXML
-    private Rectangle medElev3;
-    @FXML
-    private TextField passengerAmount;
+    private ArrayList<Rectangle> elevatorGUI = new ArrayList();
     
-    private ArrayList<ArrayList<Passengers>> destination_floors = new ArrayList();
-    private ArrayList<Passengers> genElev_ONE = new ArrayList();
-    private ArrayList<Passengers> genElev_TWO = new ArrayList();
-
-    private ArrayList<Rectangle> genElev = new ArrayList();
-    private ArrayList<Rectangle> medElev = new ArrayList();
-    private int[] gen_currentFloors = {-1,0,1,0,1,0,1,0,1,0};
-   
-    private int genOne_CHECK = 0;
+    private int[] elevatorCurrentFloors = {-1,-1,-1,-1,-1,-1,-1,-1};
     
-    private int age;
-    private Label errorText;
-    @FXML
-    private Button spawnButton2;
-    
+  
     @FXML
     private Label errorDisplay;
-    private FadeTransition fade;
+    private FadeTransition fade = new FadeTransition();
     @FXML
-    private Rectangle base2;
+    private Rectangle genElev1,genElev2,genElev3,genElev4,genElev5,medElev1,medElev2,medElev3;
     @FXML
-    private Rectangle base4;
-    @FXML
-    private Rectangle base5;
-    @FXML
-    private Rectangle base6;
-    @FXML
-    private Rectangle base7;
-    @FXML
-    private Rectangle base8;
-    @FXML
-    private Rectangle base3;
-    
+    private Rectangle base1,base2,base3,base4,base5,base6,base7,base8;
     private ArrayList<Rectangle> bases = new ArrayList();
-    @FXML
-    private Rectangle base1;
-    @FXML
-    private Rectangle oneLeft;
-    @FXML
-    private Rectangle oneRight;
-    private int county = 0;
-    private TranslateTransition tt;
-    private TranslateTransition tt2;
-    private ScaleTransition st;
-    private ScaleTransition st2;
-    private ParallelTransition p;
-    private Rectangle leftDoor;
-    private Rectangle rightDoor;
-    @FXML
-    private Rectangle oneLeft2;
-    @FXML
-    private Rectangle oneLeft3;
-    @FXML
-    private Rectangle oneLeft4;
-    @FXML
-    private Rectangle oneLeft5;
-    @FXML
-    private Rectangle oneLeft6;
-    @FXML
-    private Rectangle oneLeft7;
-    @FXML
-    private Rectangle oneLeft8;
-    @FXML
-    private Rectangle oneRight2;
-    @FXML
-    private Rectangle oneRight3;
-    @FXML
-    private Rectangle oneRight4;
-    @FXML
-    private Rectangle oneRight5;
-    @FXML
-    private Rectangle oneRight6;
-    @FXML
-    private Rectangle oneRight7;
-    @FXML
-    private Rectangle oneRight8;
     
+    @FXML
+    private Rectangle oneLeft,oneLeft2,oneLeft3,oneLeft4,oneLeft5,oneLeft6,oneLeft7,oneLeft8;
+    @FXML
+    private Rectangle oneRight,oneRight2,oneRight3,oneRight4,oneRight5,oneRight6,oneRight7,oneRight8;
     private ArrayList<Rectangle> genOne_DOORS = new ArrayList();
+    @FXML
+    private TextField autoPassAmount,intervalbox,startFloorGUI,endFloorGUI,passengerAmount;
+    @FXML
+    private CheckBox sec1,vis1,pat1,med1,sup1;
     
-    private Rectangle space;
-    private int findDoors = 0;
-    @FXML
-    private Rectangle roof;
-    private General_Elevator ge = new General_Elevator();
-    @FXML
-    private TextField autoPassAmount;
-    @FXML
-    private CheckBox sec1;
-    @FXML
-    private CheckBox vis1;
-    @FXML
-    private CheckBox pat1;
-    @FXML
-    private CheckBox med1;
-    @FXML
-    private CheckBox sup1;
-    @FXML
-    private TextField intervalbox;
-    private int autoPass;
-    private int interval;
-    @FXML
-    private RadioButton randFloors;
     
+    private int amount,autoPass,interval,startFloorTextBox,endFloorTextBox,idCounter = 0;
+    @FXML
+    private RadioButton randFloors,randType;
+    
+    @FXML
+    private Rectangle leftWall,rightWall,roof;
+    
+    @FXML
+    private Label randFloorsLabel,randTypeLabel;
+    
+    private GeneralElevatorOne ge = new GeneralElevatorOne();
+    private GeneralElevatorTwo ge2 = new GeneralElevatorTwo();
+    
+    private TranslateTransition trPass;
+    @FXML
+    private Rectangle twoLeft1,twoLeft2,twoLeft3,twoLeft4,twoLeft5,twoLeft6,twoLeft7,twoLeft8;
+    @FXML
+    private Rectangle twoRight1,twoRight2,twoRight3,twoRight4,twoRight5,twoRight6,twoRight7,twoRight8;
+    private ArrayList<Rectangle> genTwo_DOORS = new ArrayList();
+    @FXML
+    private Button statsButton;
+    @FXML
+    private Label genOneCapGui,genTwoCapGui;
+    @FXML
+    private Label genOneCurrentFloorGui,genTwoCurrentFloorGui;
+    @FXML
+    private Rectangle threeRight1,threeRight2,threeRight3,threeRight4,threeRight5,threeRight6,threeRight7,threeRight8;
+    @FXML
+    private Rectangle threeLeft1,threeLeft2,threeLeft3,threeLeft4,threeLeft5,threeLeft6,threeLeft7,threeLeft8;
+    private ArrayList<Rectangle> genThree_DOORS = new ArrayList();
     
         
     public void addItems(){
         
             
             
-            if(genElev.size() != 5){
-                genElev.add(genElev1);
-                genElev.add(genElev2);
-                genElev.add(genElev3);
-                genElev.add(genElev4);
-                genElev.add(genElev5);    
+            if(elevatorGUI.size() != 8){
+                elevatorGUI.add(genElev1);
+                elevatorGUI.add(genElev2);
+                elevatorGUI.add(genElev3);
+                elevatorGUI.add(genElev4);
+                elevatorGUI.add(genElev5); 
+                elevatorGUI.add(medElev1);
+                elevatorGUI.add(medElev2);
+                elevatorGUI.add(medElev3);
             }
             
             
-            if(medElev.size() != 3){
-                medElev.add(medElev1);
-                medElev.add(medElev2);
-                medElev.add(medElev3);
-            }
+            
             
             if(bases.size() != 9){
                 bases.add(base1);
@@ -192,9 +121,9 @@ public class PrimaryController extends TrafficGenerator{
                 bases.add(roof);
             }
             
-            if(genOne_DOORS.size()!=17){
+            if(genOne_DOORS.size()!=16){
                 
-                genOne_DOORS.add(space);
+                
                 genOne_DOORS.add(oneLeft);
                 genOne_DOORS.add(oneRight);
                 genOne_DOORS.add(oneLeft2);
@@ -213,53 +142,263 @@ public class PrimaryController extends TrafficGenerator{
                 genOne_DOORS.add(oneRight8);
           
             }
+            
+             if(genTwo_DOORS.size()!=16){
+                
+                
+                genTwo_DOORS.add(twoLeft1);
+                genTwo_DOORS.add(twoRight1);
+                genTwo_DOORS.add(twoLeft2);
+                genTwo_DOORS.add(twoRight2);
+                genTwo_DOORS.add(twoLeft3);
+                genTwo_DOORS.add(twoRight3);
+                genTwo_DOORS.add(twoLeft4);
+                genTwo_DOORS.add(twoRight4);
+                genTwo_DOORS.add(twoLeft5);
+                genTwo_DOORS.add(twoRight5);
+                genTwo_DOORS.add(twoLeft6);
+                genTwo_DOORS.add(twoRight6);
+                genTwo_DOORS.add(twoLeft7);
+                genTwo_DOORS.add(twoRight7);
+                genTwo_DOORS.add(twoLeft8);
+                genTwo_DOORS.add(twoRight8);
+          
+            }
+             
+             if(genThree_DOORS.size()!=16){
+                
+                
+                genThree_DOORS.add(threeLeft1);
+                genThree_DOORS.add(threeRight1);
+                genThree_DOORS.add(threeLeft2);
+                genThree_DOORS.add(threeRight2);
+                genThree_DOORS.add(threeLeft3);
+                genThree_DOORS.add(threeRight3);
+                genThree_DOORS.add(threeLeft4);
+                genThree_DOORS.add(threeRight4);
+                genThree_DOORS.add(threeLeft5);
+                genThree_DOORS.add(threeRight5);
+                genThree_DOORS.add(threeLeft6);
+                genThree_DOORS.add(threeRight6);
+                genThree_DOORS.add(threeLeft7);
+                genThree_DOORS.add(threeRight7);
+                genThree_DOORS.add(threeLeft8);
+                genThree_DOORS.add(threeRight8);
+          
+            }
         
     }
   
     @FXML
     private void spawnBtn(ActionEvent event){
             
-            buttonEffect();
+            //buttonEffect();
             addItems();
+            Passengers p1;
+            CheckBox[] passengerCheckBox  = {sec1,vis1,pat1,med1,sup1}; 
+            fade.setNode(errorDisplay);
             
             try{
-                    age = Integer.parseInt(passengerAmount.getText());
-                    System.out.println("Passengers Amount created:" + age);
+                    amount = Integer.parseInt(passengerAmount.getText());
+                    System.out.println("Passengers Amount created:" + amount);
                     errorDisplay.setText("Passengers have been Generated...");
                     errorDisplay.setStyle("-fx-text-fill: #46e38f");
-                    fade.setNode(errorDisplay);
+                    
                     fade.setDuration(Duration.seconds(2));
                     fade.setCycleCount(1);
                     fade.setInterpolator(Interpolator.LINEAR);
                     fade.setFromValue(1);
                     fade.setToValue(0);
                     fade.play();
-            
-                    for(int i = 0; i < age; i++){
-                
-                        passID++;
-       
-                        Passengers p1 = pass_Generator(passID);
+                     /*
+                    for(int i = 0; i < amount; i++){
+                        idCounter++;
+                        Passengers p1 = pass_Generator(idCounter);
                         passGenerator(p1);
                         
                     }
-            
-                    trPass.setOnFinished(finish ->{
-               
-                    System.out.println("AMOUNT OF FLOORS: " + destination_floors.size());
-                    if(ge.getIsGenerator()==true){
-                        elevators();
-                        ge.setIsGenerator(false);
+                    */
+                    while(amount > 0 ){
                         
+                        if(randType.isSelected()){
+                            
+                            if(randFloors.isSelected()){
+                                 p1 = pass_Generator(idCounter);
+                                passGenerator(p1);
+                                idCounter++;
+                            }else{
+                                try{
+                                    startFloorTextBox = Integer.parseInt(startFloorGUI.getText());
+                                    endFloorTextBox = Integer.parseInt(endFloorGUI.getText());
+                                    
+                                    if(startFloorTextBox == endFloorTextBox|| (startFloorTextBox < 0 && startFloorTextBox > 7) || (endFloorTextBox < 0 && endFloorTextBox > 7)){
+                                        errorDisplay.setStyle("-fx-text-fill: #fc3d03");
+                                        errorDisplay.setText("ERROR! StartFloor or EndFloor Input...");
+                                        System.out.println("ERROR! StartFloor or EndFloor Input...");
+                                        fade.setDuration(Duration.seconds(2));
+                                        fade.setCycleCount(1);
+                                        fade.setInterpolator(Interpolator.LINEAR);
+                                        fade.setFromValue(1);
+                                        fade.setToValue(0);
+                                        fade.play();
+                                    
+                                    }else{
+                                         p1 = pass_Generator2(false,true,null,startFloorTextBox,endFloorTextBox,idCounter);
+                                         passGenerator(p1);
+                                         idCounter++; 
+                                        }
+                                }catch(NumberFormatException e){
+                                        errorDisplay.setStyle("-fx-text-fill: #fc3d03");
+                                        errorDisplay.setText("ERROR! Custom Floors Not Selected...");
+                                        System.out.println("ERROR! Custom Floors Not Selected...");
+                                        fade.setDuration(Duration.seconds(2));
+                                        fade.setCycleCount(1);
+                                        fade.setInterpolator(Interpolator.LINEAR);
+                                        fade.setFromValue(1);
+                                        fade.setToValue(0);
+                                        fade.play();
+                                    
+                                    
+                                    
+                                }
+                                
+                            }
+                            
+                        }else{
+                            boolean check = false;
+                            for(int i = 0; i < passengerCheckBox.length; i++){
+                            
+                                if(passengerCheckBox[i].isSelected()){
+                                    check = true;
+                                    
+                                     if(randFloors.isSelected()){
+                                         switch(i){
+                                             case 0:
+                                                 p1 = pass_Generator2(true,false,"Security",-1,-1,idCounter);
+                                                 passGenerator(p1);
+                                                 idCounter++;
+                                                 break;
+                                             case 1:
+                                                  p1 =pass_Generator2(true,false,"Visitor",-1,-1,idCounter);
+                                                  passGenerator(p1);
+                                                  idCounter++;
+                                                 break;
+                                             case 2:
+                                                  p1 = pass_Generator2(true,false,"Patient",-1,-1,idCounter);
+                                                  passGenerator(p1);
+                                                  idCounter++;
+                                                  break;
+                                             case 3:
+                                                  p1 = pass_Generator2(true,false,"Medical",-1,-1,idCounter);
+                                                  passGenerator(p1);
+                                                  idCounter++;
+                                                  break;
+                                             case 4:
+                                                  p1 = pass_Generator2(true,false,"Support",-1,-1,idCounter);
+                                                  passGenerator(p1);
+                                                  idCounter++;
+                                                  break;
+                                             default:
+                                                 System.out.println("Error finding passenger Type");
+                                                 break;
+                                                 
+                                         }
+                                        
+                                    }else{
+                                         try{
+                                              startFloorTextBox = Integer.parseInt(startFloorGUI.getText());
+                                              endFloorTextBox = Integer.parseInt(endFloorGUI.getText());
+                                              
+                                              if(startFloorTextBox == endFloorTextBox|| (startFloorTextBox < 0 && startFloorTextBox > 7) || (endFloorTextBox < 0 && endFloorTextBox > 7)){
+                                                    errorDisplay.setStyle("-fx-text-fill: #fc3d03");
+                                                    errorDisplay.setText("ERROR! StartFloor or EndFloor Input...");
+                                                    System.out.println("ERROR! StartFloor or EndFloor Input...");
+                                                    fade.setDuration(Duration.seconds(2));
+                                                    fade.setCycleCount(1);
+                                                    fade.setInterpolator(Interpolator.LINEAR);
+                                                    fade.setFromValue(1);
+                                                    fade.setToValue(0);
+                                                    fade.play();
+                                    
+                                           }else{
+                                             switch(i){
+                                             case 0:
+                                                 p1 = pass_Generator2(false,false,"Security",startFloorTextBox,endFloorTextBox,idCounter);
+                                                 passGenerator(p1);
+                                                idCounter++;
+                                                break;
+                                             case 1:
+                                                 p1 =  pass_Generator2(false,false,"Visitor",startFloorTextBox,endFloorTextBox,idCounter);
+                                                 passGenerator(p1);
+                                                idCounter++;
+                                                break;
+                                             case 2:
+                                                 p1 =  pass_Generator2(false,false,"Patient",startFloorTextBox,endFloorTextBox,idCounter);
+                                                 passGenerator(p1);
+                                                idCounter++;
+                                                break;
+                                             case 3:
+                                                 p1 = pass_Generator2(false,false,"Medical",startFloorTextBox,endFloorTextBox,idCounter);
+                                                 passGenerator(p1);
+                                                idCounter++;
+                                                break;
+                                             case 4:
+                                                 p1 = pass_Generator2(false,false,"Support",startFloorTextBox,endFloorTextBox,idCounter);
+                                                 passGenerator(p1);
+                                                idCounter++;
+                                                break;
+                                             default:
+                                                 System.out.println("Error finding passenger Type");
+                                                 break;
+                                                 
+                                            }
+                                        }
+                                              
+                                         }catch(NumberFormatException e){
+                                             
+                                                    errorDisplay.setStyle("-fx-text-fill: #fc3d03");
+                                                    errorDisplay.setText("ERROR! StartFloor or EndFloor Input...");
+                                                    System.out.println("ERROR! StartFloor or EndFloor Input...");
+                                                    fade.setDuration(Duration.seconds(2));
+                                                    fade.setCycleCount(1);
+                                                    fade.setInterpolator(Interpolator.LINEAR);
+                                                    fade.setFromValue(1);
+                                                    fade.setToValue(0);
+                                                    fade.play();
+                                             
+                                         }
+                                        
+                                    }
+                                
+                                }
+                            }
+                            
+                            if(check == false){
+                                errorDisplay.setStyle("-fx-text-fill: #fc3d03");
+                                errorDisplay.setText("ERROR! No Passenger Type Selected...");
+                                System.out.println("ERROR! No Passenger Type Selected...");
+                                fade.setDuration(Duration.seconds(2));
+                                fade.setCycleCount(1);
+                                fade.setInterpolator(Interpolator.LINEAR);
+                                fade.setFromValue(1);
+                                fade.setToValue(0);
+                                fade.play();
+                                
+                            }
+                            
+                        }
+                        
+                        amount--;
                     }
-                    });
-            }
-            catch(NumberFormatException e){
+                    
+                    
+                    
+            
+            }catch(NumberFormatException e){
+                System.out.println(amount);
                 errorDisplay.setStyle("-fx-text-fill: #fc3d03");
-                errorDisplay.setText("ERROR! Please Enter Only Integers...");
+                errorDisplay.setText("ERROR! Passenger Amount Input...");
                 System.out.println("Please enter only Integers.");
-                fade = new FadeTransition();
-                fade.setNode(errorDisplay);
                 fade.setDuration(Duration.seconds(2));
                 fade.setCycleCount(1);
                 fade.setInterpolator(Interpolator.LINEAR);
@@ -275,7 +414,7 @@ public class PrimaryController extends TrafficGenerator{
     private void spawnBtn2(ActionEvent event) {
         
        addItems();
-           
+         fade.setNode(errorDisplay);  
         if(spawnButton2.getText().equals("OFF")){
             
                 spawnButton2.setText("ON");
@@ -283,8 +422,8 @@ public class PrimaryController extends TrafficGenerator{
                 System.out.println("Auto Passenger Generator is ON.");
                 errorDisplay.setText("Auto Passenger Generator is ON");
                 errorDisplay.setStyle("-fx-text-fill: #46e38f");
-                fade = new FadeTransition();
-                fade.setNode(errorDisplay);
+                
+                
                 fade.setDuration(Duration.seconds(2));
                 fade.setCycleCount(1);
                 fade.setInterpolator(Interpolator.LINEAR);
@@ -300,8 +439,8 @@ public class PrimaryController extends TrafficGenerator{
             System.out.println("Auto Passenger Generator is OFF");
             errorDisplay.setStyle("-fx-text-fill: #fc3d03");
                 errorDisplay.setText("Auto Passenger Generator is OFF.");
-                fade = new FadeTransition();
-                fade.setNode(errorDisplay);
+                
+                
                 fade.setDuration(Duration.seconds(2));
                 fade.setCycleCount(1);
                 fade.setInterpolator(Interpolator.LINEAR);
@@ -330,7 +469,7 @@ public class PrimaryController extends TrafficGenerator{
                     System.out.println("Auto Generate Passenger Amount: " + autoPass);
                     interval = Integer.parseInt(intervalbox.getText());
                     System.out.println("Interval Input: " + interval);
-                    
+                    Passengers passenger = null;
                     if((autoPass > 0 && autoPass <= 20) && (interval > 0 && interval <= 5)){
                          Timer timer = new Timer();
                          timer.scheduleAtFixedRate(new TimerTask(){
@@ -339,7 +478,7 @@ public class PrimaryController extends TrafficGenerator{
                         
                             System.out.println(count);
                             count--;
-                       
+                             
                        
                             if(count <= 0){
                            
@@ -347,29 +486,25 @@ public class PrimaryController extends TrafficGenerator{
                             System.out.println("GENERATING PASSENGERS");
                             Platform.runLater(() -> {
                             //Random r = new Random();
-                            int amount = autoPass;//r.nextInt(10)+1;
-                            for(int i = 0; i < amount; i++){
-                
-                                passID++;
-       
-                                Passengers p1 = pass_Generator(passID);
+                            //int amount = autoPass;//r.nextInt(10)+1;
+                            for(int i = 0; i < autoPass; i++){
+                                idCounter++;
+                                Passengers p1 = pass_Generator(idCounter);
+                                
                                 passGenerator(p1);
-                 
+                                
+                                
                             }
-                            trPass.setOnFinished(finish ->{
-                                if(ge.getIsGenerator() == true){ 
-                                    elevators();
-                                    ge.setIsGenerator(false);
-              
-                                }
+                            trPass.setOnFinished(eh ->{
                                 passGenerator_LOOP();
                             });
+                                
                           });
                             
                        }
                     }
                 },0,1000);
-                    }else{
+          }else{
                         spawnButton2.setText("OFF");
                         spawnButton2.setStyle("-fx-background-color:   #bf1b1b");
                         System.out.println("Auto Passenger Generator is OFF");
@@ -388,8 +523,7 @@ public class PrimaryController extends TrafficGenerator{
                     
             
                     
-            }
-            catch(NumberFormatException e){
+            }catch(NumberFormatException e){
                 spawnButton2.setText("OFF");
                 spawnButton2.setStyle("-fx-background-color:   #bf1b1b");
                 System.out.println("Auto Passenger Generator is OFF");
@@ -419,53 +553,9 @@ public class PrimaryController extends TrafficGenerator{
                  
     }
     
-
-    public void elevators(){
-        for(int i = 0; i < getFloors().size(); i++){
-            for(int j = 0; j < getFloors().get(i).size(); j++){
-                Passengers p = getFloors().get(i).get(j);
-                switch(p.getElv_Num()){
-                    case 1:
-                        if(p.getPassType().equals("Patient") || p.getPassType().equals("Visitor") || p.getPassType().equals("Security")){
-                            gen_currentFloors[0] = 0; 
-                        }
-                        break;
-                    
-                    case 2:
-                        if(p.getPassType().equals("Patient") || p.getPassType().equals("Visitor") || p.getPassType().equals("Security")){
-                            gen_currentFloors[2] = 0; 
-                        }
-                        break;
-                        
-                }
-
-            }
-        }
-        
-        System.out.println("LOOK: "+ Arrays.toString(gen_currentFloors));
-        for(int i = 0; i < gen_currentFloors.length; i++){
-            if(gen_currentFloors[i] == 0){
-                switch(i){
-                    case 0:
-                        System.out.println("General Elevator 1 has Requests");
-                        ge.genOne_UP_REQUESTS(getFloors(),gen_currentFloors,genElev,bases,genOne_DOORS);
-                        break;
-                    
-                    case 2:
-                        System.out.println("General Elevator 1 has Requests");
-                        
-                        break;
-                        
-                }
-            }else{
-                System.out.println("No Request for Elevator number: " + (i+1));
-            }
-            
-        }
-            
-    }
-    
     public void passGenerator(Passengers newp){
+        leftWall.toFront();
+        rightWall.toFront();
         Random r = new Random();
         System.out.println(newp.toString());
         
@@ -501,39 +591,38 @@ public class PrimaryController extends TrafficGenerator{
         
         box.setX(-25);
         String passT = newp.getPassType();
-        if(passT.equals("Visitor")||passT.equals("Patient")||passT.equals("Security")||passT.equals("Medical")||passT.equals("Support")){
+        
             
              switch(newp.getStartFloor()){
-                 case 1: 
-                    box.setY(488);
+                 case 0: 
+                    box.setY(485);
                     break;
+                 case 1:
+                     box.setY(420);
+                     break;
                  case 2:
-                     box.setY(423);
+                     box.setY(355);
                      break;
                  case 3:
-                     box.setY(358);
+                     box.setY(290);
                      break;
                  case 4:
-                     box.setY(293);
+                     box.setY(225);
                      break;
                  case 5:
-                     box.setY(228);
+                     box.setY(160);
                      break;
                  case 6:
-                     box.setY(163);
+                     box.setY(95);
                      break;
                  case 7:
-                     box.setY(98);
-                     break;
-                 case 8:
-                     box.setY(33);
+                     box.setY(30);
                      break;
                  default:
                      System.out.println("Error finding spawn");
-                     break;
-                 
+                     break;    
              }
-        }
+        
         switch(passT){
             case "Patient":
                 box.setFill(Color.web("#ff7d4a")); 
@@ -590,7 +679,7 @@ public class PrimaryController extends TrafficGenerator{
                 break;
             case 2:
                  if((passT.equals("Visitor") || passT.equals("Patient") || passT.equals("Security"))&& box.getX() < 0){
-                    trPass.setToX(135);
+                    trPass.setToX(r.nextInt(3)+132);
                 }
                 
                 break;
@@ -614,28 +703,20 @@ public class PrimaryController extends TrafficGenerator{
                 break;
             
             case 6:
-                if((passT.equals("Medical") || passT.equals("Support")|| passT.equals("Security"))&& box.getX() > 0){
-                    trPass.setToX(-180);
-                }
-                else if((passT.equals("Medical") || passT.equals("Support")|| passT.equals("Security"))&& box.getX() < 0){
+                if((passT.equals("Medical") || passT.equals("Support")|| passT.equals("Security"))&& box.getX() < 0){
                     trPass.setToX(420);
                 }
+                
                 break;
             
             case 7:
-                if((passT.equals("Medical") || passT.equals("Support")|| passT.equals("Security"))&& box.getX() > 0){
-                    trPass.setToX(-125);
-                }
-                else if((passT.equals("Medical") || passT.equals("Support")|| passT.equals("Security"))&& box.getX() < 0){
+                 if((passT.equals("Medical") || passT.equals("Support")|| passT.equals("Security"))&& box.getX() < 0){
                     trPass.setToX(505);
                 }
                 break;
             
             case 8 :
-                if((passT.equals("Medical") || passT.equals("Support")|| passT.equals("Security"))&& box.getX() > 0){
-                    trPass.setToX(-55);
-                }
-                else if((passT.equals("Medical") || passT.equals("Support")|| passT.equals("Security"))&& box.getX() < 0){
+                 if((passT.equals("Medical") || passT.equals("Support")|| passT.equals("Security"))&& box.getX() < 0){
                     trPass.setToX(575);
                 }
                 break;
@@ -646,7 +727,7 @@ public class PrimaryController extends TrafficGenerator{
                 break;
         }
         
-        Random e = new Random();
+        
         int dur = 1;
         
         trPass.setCycleCount(1);
@@ -666,9 +747,60 @@ public class PrimaryController extends TrafficGenerator{
         trPoints.play();
         trPass.play();
        
+        leftWall.toFront();
+        rightWall.toFront();
+        
+        trPtype.setOnFinished(eh ->{
+            System.out.println("TEST");
+            switch(newp.elv_num){
+                case 1:
+                    if(ge.isGeneralElevatorOneCall()){
+                        System.out.println("TESTING SWITCH");
+                        elevatorCurrentFloors[0] = 0;
+                        genOneCapGui.setText("0/12");
+                        genOneCurrentFloorGui.setText("0");
+                        ge.upRequests(getFloors(),elevatorCurrentFloors,elevatorGUI,bases,genOne_DOORS,genOneCapGui,genOneCurrentFloorGui,leftWall,rightWall);
+                        ge.setGeneralElevatorOneCall(false);
+                    }
+                    break;
+                case 2:
+                    if(ge2.isGeneralElevatorTwoCall()){
+                        System.out.println("TESTING SWITCH");
+                        elevatorCurrentFloors[1] = 0;
+                        genTwoCapGui.setText("0/12");
+                        genTwoCurrentFloorGui.setText("0");
+                        ge2.upRequests(getFloors(),elevatorCurrentFloors,elevatorGUI,bases,genTwo_DOORS,genTwoCapGui,genTwoCurrentFloorGui,leftWall,rightWall);
+                        ge2.setGeneralElevatorTwoCall(false);
+                    }
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    break;
+                case 8:
+                    break;
+                default:
+                    System.out.println("No Elevator Exist");
+                    break;
+
+            }
+            
+            
+        });
+            
+        
+        
     }
    
     public void buttonEffect(){//button effect
+        
+        
         
         spawnButton.setOnMouseReleased(event ->{
            spawnButton.setStyle("-fx-background-color: #0088ff;");
@@ -696,8 +828,9 @@ public class PrimaryController extends TrafficGenerator{
         }
         
        
-        if(randFloors.isSelected()&&sec1.isSelected()){
-            randFloors.setSelected(false);
+        if(randType.isSelected()&&sec1.isSelected()){
+            randTypeLabel.setText("");
+            randType.setSelected(false);
         }
         
     }
@@ -713,8 +846,9 @@ public class PrimaryController extends TrafficGenerator{
         }
         
        
-        if(randFloors.isSelected()&&vis1.isSelected()){
-            randFloors.setSelected(false);
+        if(randType.isSelected()&&vis1.isSelected()){
+            randTypeLabel.setText("");
+            randType.setSelected(false);
         }
         
         
@@ -730,8 +864,9 @@ public class PrimaryController extends TrafficGenerator{
         }
         
        
-        if(randFloors.isSelected()&&pat1.isSelected()){
-            randFloors.setSelected(false);
+        if(randType.isSelected()&&pat1.isSelected()){
+            randTypeLabel.setText("");
+            randType.setSelected(false);
         }
     }
 
@@ -745,8 +880,9 @@ public class PrimaryController extends TrafficGenerator{
         }
         
        
-        if(randFloors.isSelected()&&med1.isSelected()){
-            randFloors.setSelected(false);
+        if(randType.isSelected()&&med1.isSelected()){
+            randTypeLabel.setText("");
+            randType.setSelected(false);
         }
     }
 
@@ -760,28 +896,66 @@ public class PrimaryController extends TrafficGenerator{
         }
         
        
-        if(randFloors.isSelected()&&sup1.isSelected()){
-            randFloors.setSelected(false);
+        if(randType.isSelected()&&sup1.isSelected()){
+            randTypeLabel.setText("");
+            randType.setSelected(false);
         }
     }
 
     @FXML
     private void randFloors_BOX(ActionEvent event) {
-        CheckBox[] chkBox = {sec1,vis1,pat1,med1,sup1};
+       
         if(randFloors.isSelected()){
-            randFloors.setSelected(true);
-             for(int i = 0; i < chkBox.length; i++){
-                if(chkBox[i].isSelected()){
-                    chkBox[i].setSelected(false);
+            randFloorsLabel.setText("Randomize Floors (Active)");
+            
+        }else{
+            randFloorsLabel.setText("");
+        }
+       
+    }
+
+    @FXML
+    private void randType_BOX(ActionEvent event) {
+        
+         CheckBox[] passengerCheckBox  = {sec1,vis1,pat1,med1,sup1}; 
+        if(randType.isSelected()){
+            randType.setSelected(true);
+             for(int i = 0; i < passengerCheckBox.length; i++){
+                if(passengerCheckBox[i].isSelected()){
+                    passengerCheckBox[i].setSelected(false);
                     
                 }
             }
-            
+           randTypeLabel.setText("Randomize Type (Active)");
         }else{
-            randFloors.setSelected(false);
+            randTypeLabel.setText("");
+            randType.setSelected(false);
         }
-        
+    }
+
+    @FXML
+    private void statsBtn(ActionEvent event) {
        
+        try {
+             FXMLLoader loader = new FXMLLoader(getClass().getResource("StatsKeeperPopUp.fxml"));
+            Parent popupContent;
+            popupContent = loader.load();
+            Stage popupStage = new Stage();
+
+            popupStage.setScene(new Scene(popupContent));
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            double popupWidth = 700; 
+            double popupHeight = 425; 
+
+            popupStage.setWidth(popupWidth);
+            popupStage.setHeight(popupHeight);
+            popupStage.show();
+        } catch (Exception e) {
+            System.out.println("NO fxml file exist");
+        }
+
+    
+
     }
 
 
