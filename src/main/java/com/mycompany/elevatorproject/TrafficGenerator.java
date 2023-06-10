@@ -24,15 +24,14 @@ public class TrafficGenerator {
     
      
     TrafficGenerator(){
-        floors.add(new ArrayList<Passengers>());
-        floors.add(new ArrayList<Passengers>());
-        floors.add(new ArrayList<Passengers>());
-        floors.add(new ArrayList<Passengers>());
-        floors.add(new ArrayList<Passengers>());
-        floors.add(new ArrayList<Passengers>());
-        floors.add(new ArrayList<Passengers>());
-        floors.add(new ArrayList<Passengers>());
-    
+        floors.add(new ArrayList<>());
+        floors.add(new ArrayList<>());
+        floors.add(new ArrayList<>());
+        floors.add(new ArrayList<>());
+        floors.add(new ArrayList<>());
+        floors.add(new ArrayList<>());
+        floors.add(new ArrayList<>());
+        floors.add(new ArrayList<>()); 
     }
    
     
@@ -51,25 +50,15 @@ public class TrafficGenerator {
         double n = r.nextDouble();
         start_floor = r.nextInt(8); 
         end_floor = r.nextInt(8);
-        gen_elv_num = 2;//r.nextInt(5)+1;
-        sec_elv_num = r.nextInt(2)+1;//r.nextInt(8)+1;
+        gen_elv_num = r.nextInt(5)+1;
+        sec_elv_num = r.nextInt(8)+1;
         med_elv_num = r.nextInt(3)+6;
         
         while(start_floor == end_floor){
              end_floor = r.nextInt(8); 
         }
-        /*
-        System.out.println("=====================");
-        System.out.println("Probabilities: ");
-        System.out.println("=====================");
-        System.out.println("Visitor: " + v.getPassProbability());
-        System.out.println("Patient: " + p.getPassProbability());
-        System.out.println("SupportStaff: " + sp.getPassProbability());
-        System.out.println("MedicalStaff: " + ms.getPassProbability());
-        System.out.println("SecurityStaff: " + st.getPassProbability());
-        System.out.println("=====================");
-        */
-        if(n <  0/*v.getPassProbability()*/){// .15 or 15% Visitor Condition n < 0.15
+        
+        if(n <  v.getPassProbability()){// .15 or 15% Visitor Condition n < 0.15
                
                 v.setStartFloor(start_floor);
                 v.setEndFloor(end_floor);
@@ -81,7 +70,7 @@ public class TrafficGenerator {
                 System.out.println(v.toString());
                 
                 passenger = v;
-        }else if(n < 0/*v.getPassProbability() + p.getPassProbability()*/){// .25 or 25% Patient Condition n < 0.40
+        }else if(n < v.getPassProbability() + p.getPassProbability()){// .25 or 25% Patient Condition n < 0.40
                
                 p.setStartFloor(start_floor);
                 p.setEndFloor(end_floor);
@@ -93,7 +82,7 @@ public class TrafficGenerator {
                 
                 passenger = p;
         
-        }else if(n < 0/*v.getPassProbability() + p.getPassProbability()+sp.getPassProbability()*/  ){//.30 or 30% Support Staff Condition n < .70           
+        }else if(n < v.getPassProbability() + p.getPassProbability()+sp.getPassProbability()){//.30 or 30% Support Staff Condition n < .70           
                 
                 sp.setStartFloor(start_floor);
                 sp.setEndFloor(end_floor);
@@ -105,7 +94,7 @@ public class TrafficGenerator {
                 
                 passenger = sp; 
                 
-        }else if(n < 0/*v.getPassProbability() + p.getPassProbability()+sp.getPassProbability()  + ms.getPassProbability()*/){//.20 or 20% Medical Staff  Condition n < 0.90
+        }else if(n < v.getPassProbability() + p.getPassProbability()+sp.getPassProbability()  + ms.getPassProbability()){//.20 or 20% Medical Staff  Condition n < 0.90
                
                 ms.setStartFloor(start_floor);
                 ms.setEndFloor(end_floor);

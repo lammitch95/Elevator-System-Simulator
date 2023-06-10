@@ -29,7 +29,7 @@ abstract public class Passengers {
          passtypeGUI = new Label();
          startendGUI = new Label(); 
          passProbability = 0.0;
-         travelTime = 0;
+         travelTime = 0.0;
     }
     
     Passengers(String passType,int passID, int startFloor, int endFloor,int elv_num, Rectangle passGUI, Label passtypeGUI, Label startendGUI, double passProbability,double travelTime){
@@ -142,7 +142,7 @@ abstract public class Passengers {
     @Override
     public String toString(){
         
-        return(passType + "(iD:" + passID+ ")" + "[" + startFloor + " => " + endFloor + "]"+"Elevator#:"+elv_num);
+        return(passType + "(iD:" + passID+ ")" + "[" + startFloor + " => " + endFloor + "]"+"Elevator#:"+elv_num+"|Travel Time: "+travelTime);
     }
 
     /**

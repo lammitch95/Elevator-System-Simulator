@@ -11,10 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-/**
- *
- * @author lammi
- */
+
 public class GeneralElevatorTwo extends Elevators{
     
     private TranslateTransition tt;
@@ -29,7 +26,8 @@ public class GeneralElevatorTwo extends Elevators{
     private boolean requestCheck;
     private int nextFloorRequest;
     private int elevatorCap;
-  
+    private StatisticsKeeper sk = new StatisticsKeeper();
+    double calTime;
    
     
      GeneralElevatorTwo() {
@@ -40,7 +38,7 @@ public class GeneralElevatorTwo extends Elevators{
     }
         
     @Override
-    public void upRequests(ArrayList<ArrayList<Passengers>> floors,int[] cf,ArrayList<Rectangle> genElev,ArrayList<Rectangle> bases,ArrayList<Rectangle> genOne_DOORS, Label capacityGUI, Label currentFloorGUI,Rectangle lWall, Rectangle rWall){
+    public void upRequests(ArrayList<ArrayList<Passengers>> floors,int[] cf,ArrayList<Rectangle> genElev,ArrayList<Rectangle> bases,ArrayList<Rectangle> genOne_DOORS, Label capacityGUI, Label currentFloorGUI,Rectangle lWall, Rectangle rWall,Label errorDisplayGUI){
         requestCheck = false;
         if(inGeneralElevator.size() < getMax_Capacity()){
         for(int i = cf[1]; i < getMax_Floors(); i++){//this for loop checks between current floor and highest floor to get Elevator request
@@ -92,7 +90,7 @@ public class GeneralElevatorTwo extends Elevators{
         
         
        if(requestCheck == false){
-           elevatorRequestCheck(floors,cf, genElev,bases, genOne_DOORS,capacityGUI,currentFloorGUI,lWall,rWall);
+           elevatorRequestCheck(floors,cf, genElev,bases, genOne_DOORS,capacityGUI,currentFloorGUI,lWall,rWall,errorDisplayGUI);
        }else{
         
         
@@ -186,7 +184,7 @@ public class GeneralElevatorTwo extends Elevators{
                     inGeneralElevator.get(i).getPassGUI().toFront();
                     inGeneralElevator.get(i).getPassTypeGUI().toFront();
                     inGeneralElevator.get(i).getStartEndGUI().toFront();
-
+                     System.out.println("NODE POSITION: " + inGeneralElevator.get(i).getPassGUI().getX());
                     Random ra = new Random();
                     int gen_delay = ra.nextInt(5)+3;
 
@@ -197,7 +195,7 @@ public class GeneralElevatorTwo extends Elevators{
                     passIN.setNode(inGeneralElevator.get(i).getPassGUI());
                     passIN.setDuration(Duration.seconds(gen_delay));
                     passIN.setCycleCount(1);
-                    passIN.setByX(500);
+                    passIN.setByX(485);
 
 
                     passtypeIN.setNode(inGeneralElevator.get(i).getPassTypeGUI());
@@ -217,7 +215,9 @@ public class GeneralElevatorTwo extends Elevators{
                     passtypeIN.play();
                     startendIN.play();
 
-
+                    calTime = sk.calculateTravelTime(inGeneralElevator.get(i).getTravelTime());
+                    inGeneralElevator.get(i).setTravelTime(calTime);
+                    sk.updatTravelTimeData(inGeneralElevator.get(i));
 
 
                 }
@@ -245,7 +245,7 @@ public class GeneralElevatorTwo extends Elevators{
                     p.getStartEndGUI().setLayoutX(p.getPassGUI().getX()-6);
                     p.getStartEndGUI().setLayoutY(p.getPassGUI().getY()-31);
                     capacityGUI.setText(Integer.toString(inGeneralElevator.size())+"/12");
-                    
+                    p.setTravelTime(System.currentTimeMillis());
                 }
                 
                 
@@ -275,6 +275,16 @@ public class GeneralElevatorTwo extends Elevators{
             }
             
         }
+        for(int i = 0; i < getDestination_Floors().size(); i++){
+            for(int j = 0; j < getDestination_Floors().get(i).size(); j++){
+                Passengers pa = getDestination_Floors().get(i).get(j);
+                pa.getPassTypeGUI().toFront();
+                pa.getStartEndGUI().toFront();
+                pa.getPassGUI().toFront();
+            }
+            
+        }
+        errorDisplayGUI.toFront();
          tt = new TranslateTransition(Duration.seconds(1),leftDoor);
          st = new ScaleTransition(Duration.seconds(1),leftDoor);
          tt2 = new TranslateTransition(Duration.seconds(1),rightDoor);
@@ -293,7 +303,7 @@ public class GeneralElevatorTwo extends Elevators{
          
          p.setOnFinished(finish3 ->{
              System.out.println("CHECKING RECURSION APPROACH");
-            upRequests(floors,cf,genElev,bases,genOne_DOORS,capacityGUI,currentFloorGUI,lWall,rWall);
+            upRequests(floors,cf,genElev,bases,genOne_DOORS,capacityGUI,currentFloorGUI,lWall,rWall,errorDisplayGUI);
         });
      });
            
@@ -305,7 +315,7 @@ public class GeneralElevatorTwo extends Elevators{
     }    
     
     @Override
-    public void elevatorRequestCheck(ArrayList<ArrayList<Passengers>> floors,int[] cf,ArrayList<Rectangle> genElev,ArrayList<Rectangle> bases,ArrayList<Rectangle> genOne_DOORS,Label capacityGUI, Label currentFloorGUI,Rectangle lWall, Rectangle rWall){
+    public void elevatorRequestCheck(ArrayList<ArrayList<Passengers>> floors,int[] cf,ArrayList<Rectangle> genElev,ArrayList<Rectangle> bases,ArrayList<Rectangle> genOne_DOORS,Label capacityGUI, Label currentFloorGUI,Rectangle lWall, Rectangle rWall,Label errorDisplayGUI){
         requestCheck = false;
         System.out.println("DOWN METHOD HA");
         System.out.println("Next Floor down: " + nextFloorRequest);
@@ -368,7 +378,7 @@ public class GeneralElevatorTwo extends Elevators{
                         Passengers p = floors.get(i).get(j);
                         if(p.getElv_Num()==2 && (p.getPassType().equals("Patient")||p.getPassType().equals("Visitor")||p.getPassType().equals("Security")) && (p.getEndFloor() > p.getStartFloor()) ){
                             requestCheck = true;
-                            upRequests(floors,cf,genElev,bases,genOne_DOORS,capacityGUI,currentFloorGUI,lWall,rWall);
+                            upRequests(floors,cf,genElev,bases,genOne_DOORS,capacityGUI,currentFloorGUI,lWall,rWall,errorDisplayGUI);
                             break; 
                         }
                     }
@@ -449,7 +459,7 @@ public class GeneralElevatorTwo extends Elevators{
                     p.getStartEndGUI().setLayoutX(p.getPassGUI().getX()-6);
                     p.getStartEndGUI().setLayoutY(p.getPassGUI().getY()-31);
                     capacityGUI.setText(Integer.toString(inGeneralElevator.size())+"/12");
-                    
+                    p.setTravelTime(System.currentTimeMillis());
                 }
                 
                 
@@ -477,7 +487,16 @@ public class GeneralElevatorTwo extends Elevators{
             }
             
         }
-        
+        for(int i = 0; i < getDestination_Floors().size(); i++){
+            for(int j = 0; j < getDestination_Floors().get(i).size(); j++){
+                Passengers pa = getDestination_Floors().get(i).get(j);
+                pa.getPassTypeGUI().toFront();
+                pa.getStartEndGUI().toFront();
+                pa.getPassGUI().toFront();
+            }
+            
+        }
+        errorDisplayGUI.toFront();
        
          tt = new TranslateTransition(Duration.seconds(1),leftDoor);
          st = new ScaleTransition(Duration.seconds(1),leftDoor);
@@ -497,7 +516,7 @@ public class GeneralElevatorTwo extends Elevators{
          
          p.setOnFinished(finish3 ->{
         
-         downRequests(floors,cf,genElev,bases,genOne_DOORS,capacityGUI,currentFloorGUI,lWall,rWall);
+         downRequests(floors,cf,genElev,bases,genOne_DOORS,capacityGUI,currentFloorGUI,lWall,rWall,errorDisplayGUI);
 
         });
         
@@ -510,7 +529,7 @@ public class GeneralElevatorTwo extends Elevators{
     }
     
     @Override
-    public void downRequests(ArrayList<ArrayList<Passengers>> floors,int[] cf,ArrayList<Rectangle> genElev,ArrayList<Rectangle> bases,ArrayList<Rectangle> genOne_DOORS,Label capacityGUI, Label currentFloorGUI,Rectangle lWall, Rectangle rWall){
+    public void downRequests(ArrayList<ArrayList<Passengers>> floors,int[] cf,ArrayList<Rectangle> genElev,ArrayList<Rectangle> bases,ArrayList<Rectangle> genOne_DOORS,Label capacityGUI, Label currentFloorGUI,Rectangle lWall, Rectangle rWall,Label errorDisplayGUI){
          System.out.println("Time for down requests");
          requestCheck = false;
          if(inGeneralElevator.size() < getMax_Capacity()){
@@ -653,7 +672,7 @@ public class GeneralElevatorTwo extends Elevators{
                     passIN.setNode(inGeneralElevator.get(i).getPassGUI());
                     passIN.setDuration(Duration.seconds(gen_delay));
                     passIN.setCycleCount(1);
-                    passIN.setByX(500);
+                    passIN.setByX(485);
 
 
                     passtypeIN.setNode(inGeneralElevator.get(i).getPassTypeGUI());
@@ -673,7 +692,9 @@ public class GeneralElevatorTwo extends Elevators{
                     passtypeIN.play();
                     startendIN.play();
 
-
+                    calTime = sk.calculateTravelTime(inGeneralElevator.get(i).getTravelTime());
+                    inGeneralElevator.get(i).setTravelTime(calTime);
+                    sk.updatTravelTimeData(inGeneralElevator.get(i));
 
 
                 }
@@ -702,7 +723,7 @@ public class GeneralElevatorTwo extends Elevators{
                     p.getStartEndGUI().setLayoutX(p.getPassGUI().getX()-6);
                     p.getStartEndGUI().setLayoutY(p.getPassGUI().getY()-31);
                     capacityGUI.setText(Integer.toString(inGeneralElevator.size())+"/12");
-                    
+                    p.setTravelTime(System.currentTimeMillis());
                 }
                 
                 
@@ -732,7 +753,16 @@ public class GeneralElevatorTwo extends Elevators{
             }
             
         }
-        
+         for(int i = 0; i < getDestination_Floors().size(); i++){
+            for(int j = 0; j < getDestination_Floors().get(i).size(); j++){
+                Passengers pa = getDestination_Floors().get(i).get(j);
+                pa.getPassTypeGUI().toFront();
+                pa.getStartEndGUI().toFront();
+                pa.getPassGUI().toFront();
+            }
+            
+        }
+        errorDisplayGUI.toFront();
          tt = new TranslateTransition(Duration.seconds(1),leftDoor);
          st = new ScaleTransition(Duration.seconds(1),leftDoor);
          tt2 = new TranslateTransition(Duration.seconds(1),rightDoor);
@@ -758,8 +788,13 @@ public class GeneralElevatorTwo extends Elevators{
                             if(p.getElv_Num()==2 && (p.getPassType().equals("Patient")||p.getPassType().equals("Visitor")||p.getPassType().equals("Security")) && (p.getEndFloor() > p.getStartFloor())  ){
                                 nextFloorRequest= i;
                                 requestCheck = true;
-                                upRequests(floors,cf,genElev,bases,genOne_DOORS,capacityGUI,currentFloorGUI,lWall,rWall);
+                                upRequests(floors,cf,genElev,bases,genOne_DOORS,capacityGUI,currentFloorGUI,lWall,rWall,errorDisplayGUI);
                                 break; 
+                            }else if(p.getElv_Num()==2  && (p.getPassType().equals("Patient")||p.getPassType().equals("Visitor")||p.getPassType().equals("Security")) && (p.getEndFloor() < p.getStartFloor())  ){
+                                nextFloorRequest= i;
+                                requestCheck = true;
+                                elevatorRequestCheck(floors,cf,genElev,bases,genOne_DOORS,capacityGUI,currentFloorGUI,lWall,rWall,errorDisplayGUI);
+                                break;
                             }
                         }
                         if(requestCheck){
@@ -775,7 +810,7 @@ public class GeneralElevatorTwo extends Elevators{
                      cf[1] = -1;
                  }
              }else{
-                downRequests( floors, cf,genElev, bases, genOne_DOORS,capacityGUI,currentFloorGUI,lWall,rWall);      
+                downRequests( floors, cf,genElev, bases, genOne_DOORS,capacityGUI,currentFloorGUI,lWall,rWall,errorDisplayGUI);      
 
              }
              

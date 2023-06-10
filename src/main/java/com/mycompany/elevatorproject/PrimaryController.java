@@ -38,7 +38,8 @@ public class PrimaryController extends TrafficGenerator{
     
     private int[] elevatorCurrentFloors = {-1,-1,-1,-1,-1,-1,-1,-1};
     
-  
+    private StatisticsKeeper sk = new StatisticsKeeper();
+    private StatsKeeperPopUpController skGUI = new StatsKeeperPopUpController();
     @FXML
     private Label errorDisplay;
     private FadeTransition fade = new FadeTransition();
@@ -59,7 +60,7 @@ public class PrimaryController extends TrafficGenerator{
     private CheckBox sec1,vis1,pat1,med1,sup1;
     
     
-    private int amount,autoPass,interval,startFloorTextBox,endFloorTextBox,idCounter = 0;
+    private int amount,autoPass,interval,startFloorTextBox,endFloorTextBox,idCounter = sk.getLargestPassengerID();
     @FXML
     private RadioButton randFloors,randType;
     
@@ -69,8 +70,7 @@ public class PrimaryController extends TrafficGenerator{
     @FXML
     private Label randFloorsLabel,randTypeLabel;
     
-    private GeneralElevatorOne ge = new GeneralElevatorOne();
-    private GeneralElevatorTwo ge2 = new GeneralElevatorTwo();
+    
     
     private TranslateTransition trPass;
     @FXML
@@ -81,19 +81,60 @@ public class PrimaryController extends TrafficGenerator{
     @FXML
     private Button statsButton;
     @FXML
-    private Label genOneCapGui,genTwoCapGui;
+    private Label genOneCapGui,genTwoCapGui,genThreeCapGui,genFourCapGui,genFiveCapGui,medOneCapGui,medTwoCapGui,medThreeCapGui;
     @FXML
-    private Label genOneCurrentFloorGui,genTwoCurrentFloorGui;
+    private Label genOneCurrentFloorGui,genTwoCurrentFloorGui,genThreeCurrentFloorGui,genFourCurrentFloorGui,genFiveCurrentFloorGui,medOneCurrentFloorGui,medTwoCurrentFloorGui,medThreeCurrentFloorGui;
     @FXML
     private Rectangle threeRight1,threeRight2,threeRight3,threeRight4,threeRight5,threeRight6,threeRight7,threeRight8;
     @FXML
     private Rectangle threeLeft1,threeLeft2,threeLeft3,threeLeft4,threeLeft5,threeLeft6,threeLeft7,threeLeft8;
     private ArrayList<Rectangle> genThree_DOORS = new ArrayList();
+    @FXML
+    private Label countdownGUI;
+    @FXML
+    private Button clearDataButton;
+    @FXML
+    private Rectangle fourLeft1,fourLeft2,fourLeft3,fourLeft4,fourLeft5,fourLeft6,fourLeft7,fourLeft8;
+    @FXML
+    private Rectangle fourRight,fourRight2,fourRight3,fourRight4,fourRight5,fourRight6,fourRight7,fourRight8;
+    @FXML
+    private Rectangle fiveLeft,fiveLeft2,fiveLeft3,fiveLeft4,fiveLeft5,fiveLeft6,fiveLeft7,fiveLeft8;
+     @FXML
+    private Rectangle fiveRight,fiveRight2,fiveRight3,fiveRight4,fiveRight5,fiveRight6,fiveRight7,fiveRight8;
+    @FXML
+    private Rectangle sixLeft,sixLeft2,sixLeft3,sixLeft4,sixLeft5,sixLeft6,sixLeft7,sixLeft8;
+    @FXML
+    private Rectangle sixRight,sixRight2,sixRight3,sixRight4,sixRight5,sixRight6,sixRight7,sixRight8;
+    @FXML
+    private Rectangle sevenLeft,sevenLeft2,sevenLeft3,sevenLeft4,sevenLeft5,sevenLeft6,sevenLeft7,sevenLeft8;
+    @FXML
+    private Rectangle sevenRight,sevenRight2,sevenRight3,sevenRight4,sevenRight5,sevenRight6,sevenRight7,sevenRight8;
+    @FXML
+    private Rectangle eightLeft,eightLeft2,eightLeft3,eightLeft4,eightLeft5,eightLeft6,eightLeft7,eightLeft8;
+    @FXML
+    private Rectangle eightRight,eightRight2,eightRight3,eightRight4,eightRight5,eightRight6,eightRight7,eightRight8;
+    private ArrayList<Rectangle> genFour_DOORS = new ArrayList();
+    private ArrayList<Rectangle> genFive_DOORS = new ArrayList();
+    private ArrayList<Rectangle> genSix_DOORS = new ArrayList();
+    private ArrayList<Rectangle> genSeven_DOORS = new ArrayList();
+    private ArrayList<Rectangle> genEight_DOORS = new ArrayList();
     
-        
+    
+    private GeneralElevatorOne ge = new GeneralElevatorOne();
+    private GeneralElevatorTwo ge2 = new GeneralElevatorTwo();
+    private GeneralElevatorThree ge3 = new GeneralElevatorThree();
+    private GeneralElevatorFour ge4 = new GeneralElevatorFour();
+    private GeneralElevatorFive ge5 = new GeneralElevatorFive();
+    private MedicalElevatorOne me = new MedicalElevatorOne();
+    private MedicalElevatorTwo me2 = new MedicalElevatorTwo();
+    private MedicalElevatorThree me3 = new MedicalElevatorThree();
+    
+    
+    
+    
     public void addItems(){
         
-            
+          errorDisplay.toFront();  
             
             if(elevatorGUI.size() != 8){
                 elevatorGUI.add(genElev1);
@@ -186,12 +227,124 @@ public class PrimaryController extends TrafficGenerator{
                 genThree_DOORS.add(threeRight8);
           
             }
+             
+             if(genFour_DOORS.size()!=16){
+                
+                
+                genFour_DOORS.add(fourLeft1);
+                genFour_DOORS.add(fourRight);
+                genFour_DOORS.add(fourLeft2);
+                genFour_DOORS.add(fourRight2);
+                genFour_DOORS.add(fourLeft3);
+                genFour_DOORS.add(fourRight3);
+                genFour_DOORS.add(fourLeft4);
+                genFour_DOORS.add(fourRight4);
+                genFour_DOORS.add(fourLeft5);
+                genFour_DOORS.add(fourRight5);
+                genFour_DOORS.add(fourLeft6);
+                genFour_DOORS.add(fourRight6);
+                genFour_DOORS.add(fourLeft7);
+                genFour_DOORS.add(fourRight7);
+                genFour_DOORS.add(fourLeft8);
+                genFour_DOORS.add(fourRight8);
+          
+            }
+             
+              if(genFive_DOORS.size()!=16){
+                
+                
+                genFive_DOORS.add(fiveLeft);
+                genFive_DOORS.add(fiveRight);
+                genFive_DOORS.add(fiveLeft2);
+                genFive_DOORS.add(fiveRight2);
+                genFive_DOORS.add(fiveLeft3);
+                genFive_DOORS.add(fiveRight3);
+                genFive_DOORS.add(fiveLeft4);
+                genFive_DOORS.add(fiveRight4);
+                genFive_DOORS.add(fiveLeft5);
+                genFive_DOORS.add(fiveRight5);
+                genFive_DOORS.add(fiveLeft6);
+                genFive_DOORS.add(fiveRight6);
+                genFive_DOORS.add(fiveLeft7);
+                genFive_DOORS.add(fiveRight7);
+                genFive_DOORS.add(fiveLeft8);
+                genFive_DOORS.add(fiveRight8);
+          
+            }
+              
+               if(genSix_DOORS.size()!=16){
+                
+                
+                genSix_DOORS.add(sixLeft);
+                genSix_DOORS.add(sixRight);
+                genSix_DOORS.add(sixLeft2);
+                genSix_DOORS.add(sixRight2);
+                genSix_DOORS.add(sixLeft3);
+                genSix_DOORS.add(sixRight3);
+                genSix_DOORS.add(sixLeft4);
+                genSix_DOORS.add(sixRight4);
+                genSix_DOORS.add(sixLeft5);
+                genSix_DOORS.add(sixRight5);
+                genSix_DOORS.add(sixLeft6);
+                genSix_DOORS.add(sixRight6);
+                genSix_DOORS.add(sixLeft7);
+                genSix_DOORS.add(sixRight7);
+                genSix_DOORS.add(sixLeft8);
+                genSix_DOORS.add(sixRight8);
+          
+            }
+               
+                if(genSeven_DOORS.size()!=16){
+                
+                
+                genSeven_DOORS.add(sevenLeft);
+                genSeven_DOORS.add(sevenRight);
+                genSeven_DOORS.add(sevenLeft2);
+                genSeven_DOORS.add(sevenRight2);
+                genSeven_DOORS.add(sevenLeft3);
+                genSeven_DOORS.add(sevenRight3);
+                genSeven_DOORS.add(sevenLeft4);
+                genSeven_DOORS.add(sevenRight4);
+                genSeven_DOORS.add(sevenLeft5);
+                genSeven_DOORS.add(sevenRight5);
+                genSeven_DOORS.add(sevenLeft6);
+                genSeven_DOORS.add(sevenRight6);
+                genSeven_DOORS.add(sevenLeft7);
+                genSeven_DOORS.add(sevenRight7);
+                genSeven_DOORS.add(sevenLeft8);
+                genSeven_DOORS.add(sevenRight8);
+          
+            }
+                
+                 if(genEight_DOORS.size()!=16){
+                
+                
+                genEight_DOORS.add(eightLeft);
+                genEight_DOORS.add(eightRight);
+                genEight_DOORS.add(eightLeft2);
+                genEight_DOORS.add(eightRight2);
+                genEight_DOORS.add(eightLeft3);
+                genEight_DOORS.add(eightRight3);
+                genEight_DOORS.add(eightLeft4);
+                genEight_DOORS.add(eightRight4);
+                genEight_DOORS.add(eightLeft5);
+                genEight_DOORS.add(eightRight5);
+                genEight_DOORS.add(eightLeft6);
+                genEight_DOORS.add(eightRight6);
+                genEight_DOORS.add(eightLeft7);
+                genEight_DOORS.add(eightRight7);
+                genEight_DOORS.add(eightLeft8);
+                genEight_DOORS.add(eightRight8);
+          
+            }
+                 
+             
         
     }
   
     @FXML
     private void spawnBtn(ActionEvent event){
-            
+          
             //buttonEffect();
             addItems();
             Passengers p1;
@@ -223,9 +376,10 @@ public class PrimaryController extends TrafficGenerator{
                         if(randType.isSelected()){
                             
                             if(randFloors.isSelected()){
+                                idCounter++;
                                  p1 = pass_Generator(idCounter);
                                 passGenerator(p1);
-                                idCounter++;
+                                
                             }else{
                                 try{
                                     startFloorTextBox = Integer.parseInt(startFloorGUI.getText());
@@ -243,9 +397,10 @@ public class PrimaryController extends TrafficGenerator{
                                         fade.play();
                                     
                                     }else{
+                                        idCounter++;
                                          p1 = pass_Generator2(false,true,null,startFloorTextBox,endFloorTextBox,idCounter);
                                          passGenerator(p1);
-                                         idCounter++; 
+                                         
                                         }
                                 }catch(NumberFormatException e){
                                         errorDisplay.setStyle("-fx-text-fill: #fc3d03");
@@ -274,29 +429,34 @@ public class PrimaryController extends TrafficGenerator{
                                      if(randFloors.isSelected()){
                                          switch(i){
                                              case 0:
+                                                 idCounter++;
                                                  p1 = pass_Generator2(true,false,"Security",-1,-1,idCounter);
                                                  passGenerator(p1);
-                                                 idCounter++;
+                                                 
                                                  break;
                                              case 1:
+                                                 idCounter++;
                                                   p1 =pass_Generator2(true,false,"Visitor",-1,-1,idCounter);
                                                   passGenerator(p1);
-                                                  idCounter++;
+                                                  
                                                  break;
                                              case 2:
+                                                 idCounter++;
                                                   p1 = pass_Generator2(true,false,"Patient",-1,-1,idCounter);
                                                   passGenerator(p1);
-                                                  idCounter++;
+                                                  
                                                   break;
                                              case 3:
+                                                 idCounter++;
                                                   p1 = pass_Generator2(true,false,"Medical",-1,-1,idCounter);
                                                   passGenerator(p1);
-                                                  idCounter++;
+                                                  
                                                   break;
                                              case 4:
+                                                 idCounter++;
                                                   p1 = pass_Generator2(true,false,"Support",-1,-1,idCounter);
                                                   passGenerator(p1);
-                                                  idCounter++;
+                                                  
                                                   break;
                                              default:
                                                  System.out.println("Error finding passenger Type");
@@ -323,29 +483,34 @@ public class PrimaryController extends TrafficGenerator{
                                            }else{
                                              switch(i){
                                              case 0:
+                                                 idCounter++;
                                                  p1 = pass_Generator2(false,false,"Security",startFloorTextBox,endFloorTextBox,idCounter);
                                                  passGenerator(p1);
-                                                idCounter++;
+                                                
                                                 break;
                                              case 1:
+                                                 idCounter++;
                                                  p1 =  pass_Generator2(false,false,"Visitor",startFloorTextBox,endFloorTextBox,idCounter);
                                                  passGenerator(p1);
-                                                idCounter++;
+                                               
                                                 break;
                                              case 2:
+                                                 idCounter++;
                                                  p1 =  pass_Generator2(false,false,"Patient",startFloorTextBox,endFloorTextBox,idCounter);
                                                  passGenerator(p1);
-                                                idCounter++;
+                                            
                                                 break;
                                              case 3:
+                                                 idCounter++;
                                                  p1 = pass_Generator2(false,false,"Medical",startFloorTextBox,endFloorTextBox,idCounter);
                                                  passGenerator(p1);
-                                                idCounter++;
+                                               
                                                 break;
                                              case 4:
+                                                 idCounter++;
                                                  p1 = pass_Generator2(false,false,"Support",startFloorTextBox,endFloorTextBox,idCounter);
                                                  passGenerator(p1);
-                                                idCounter++;
+                                               
                                                 break;
                                              default:
                                                  System.out.println("Error finding passenger Type");
@@ -462,7 +627,8 @@ public class PrimaryController extends TrafficGenerator{
          
            
         if(spawnButton2.getText().equals("OFF")){
-            System.out.println("Auto Passenger Generator is OFF.");   
+            System.out.println("Auto Passenger Generator is OFF.");  
+            countdownGUI.setText("");
         }else{
               try{
                     autoPass = Integer.parseInt(autoPassAmount.getText());
@@ -473,14 +639,27 @@ public class PrimaryController extends TrafficGenerator{
                     if((autoPass > 0 && autoPass <= 20) && (interval > 0 && interval <= 5)){
                          Timer timer = new Timer();
                          timer.scheduleAtFixedRate(new TimerTask(){
-                            int count = interval;
+                            int count = interval+1;
+                            
                             public void run(){
                         
                             System.out.println(count);
+                            
+                            Platform.runLater(() -> {
+                                countdownGUI.setText(count+"...");
+                    
+                            });
+                            
                             count--;
-                             
-                       
-                            if(count <= 0){
+                            if(spawnButton2.getText().equals("OFF")){
+                                
+                                System.out.println("Auto Passenger Generator is OFF.");  
+                                Platform.runLater(() -> {
+                                countdownGUI.setText("");
+                    
+                                });
+                                timer.cancel();
+                            }else if(count <= 0){
                            
                             timer.cancel(); 
                             System.out.println("GENERATING PASSENGERS");
@@ -502,6 +681,7 @@ public class PrimaryController extends TrafficGenerator{
                           });
                             
                        }
+                        
                     }
                 },0,1000);
           }else{
@@ -750,40 +930,94 @@ public class PrimaryController extends TrafficGenerator{
         leftWall.toFront();
         rightWall.toFront();
         
+        
+        
         trPtype.setOnFinished(eh ->{
+            
+            sk.updateDatabase(newp);
+            
             System.out.println("TEST");
             switch(newp.elv_num){
                 case 1:
                     if(ge.isGeneralElevatorOneCall()){
-                        System.out.println("TESTING SWITCH");
+                        
                         elevatorCurrentFloors[0] = 0;
                         genOneCapGui.setText("0/12");
                         genOneCurrentFloorGui.setText("0");
-                        ge.upRequests(getFloors(),elevatorCurrentFloors,elevatorGUI,bases,genOne_DOORS,genOneCapGui,genOneCurrentFloorGui,leftWall,rightWall);
+                        ge.upRequests(getFloors(),elevatorCurrentFloors,elevatorGUI,bases,genOne_DOORS,genOneCapGui,genOneCurrentFloorGui,leftWall,rightWall,errorDisplay);
                         ge.setGeneralElevatorOneCall(false);
                     }
                     break;
                 case 2:
                     if(ge2.isGeneralElevatorTwoCall()){
-                        System.out.println("TESTING SWITCH");
+                        
                         elevatorCurrentFloors[1] = 0;
                         genTwoCapGui.setText("0/12");
                         genTwoCurrentFloorGui.setText("0");
-                        ge2.upRequests(getFloors(),elevatorCurrentFloors,elevatorGUI,bases,genTwo_DOORS,genTwoCapGui,genTwoCurrentFloorGui,leftWall,rightWall);
+                        ge2.upRequests(getFloors(),elevatorCurrentFloors,elevatorGUI,bases,genTwo_DOORS,genTwoCapGui,genTwoCurrentFloorGui,leftWall,rightWall,errorDisplay);
                         ge2.setGeneralElevatorTwoCall(false);
                     }
                     break;
                 case 3:
+                    if(ge3.isGeneralElevatorThreeCall()){
+                        
+                        elevatorCurrentFloors[2] = 0;
+                        genThreeCapGui.setText("0/12");
+                        genThreeCurrentFloorGui.setText("0");
+                        ge3.upRequests(getFloors(),elevatorCurrentFloors,elevatorGUI,bases,genThree_DOORS,genThreeCapGui,genThreeCurrentFloorGui,leftWall,rightWall,errorDisplay);
+                        ge3.setGeneralElevatorThreeCall(false);
+                    }
                     break;
+                    
                 case 4:
+                    if(ge4.isGeneralElevatorFourCall()){
+                        
+                        elevatorCurrentFloors[3] = 0;
+                        genFourCapGui.setText("0/12");
+                        genFourCurrentFloorGui.setText("0");
+                        ge4.upRequests(getFloors(),elevatorCurrentFloors,elevatorGUI,bases,genFour_DOORS,genFourCapGui,genFourCurrentFloorGui,leftWall,rightWall,errorDisplay);
+                        ge4.setGeneralElevatorFourCall(false);
+                    }
                     break;
                 case 5:
+                    if(ge5.isGeneralElevatorFiveCall()){
+                        
+                        elevatorCurrentFloors[4] = 0;
+                        genFiveCapGui.setText("0/12");
+                        genFiveCurrentFloorGui.setText("0");
+                        ge5.upRequests(getFloors(),elevatorCurrentFloors,elevatorGUI,bases,genFive_DOORS,genFiveCapGui,genFiveCurrentFloorGui,leftWall,rightWall,errorDisplay);
+                        ge5.setGeneralElevatorFiveCall(false);
+                    }
                     break;
                 case 6:
+                     if(me.isMedicalElevatorOneCall()){
+                        
+                        elevatorCurrentFloors[5] = 0;
+                        medOneCapGui.setText("0/4");
+                        medOneCurrentFloorGui.setText("0");
+                        me.upRequests(getFloors(),elevatorCurrentFloors,elevatorGUI,bases,genSix_DOORS,medOneCapGui,medOneCurrentFloorGui,leftWall,rightWall,errorDisplay);
+                        me.setMedicalElevatorOneCall(false);
+                    }
                     break;
                 case 7:
+                    if(me2.isMedicalElevatorTwoCall()){
+                        
+                        elevatorCurrentFloors[6] = 0;
+                        medTwoCapGui.setText("0/4");
+                        medTwoCurrentFloorGui.setText("0");
+                        me2.upRequests(getFloors(),elevatorCurrentFloors,elevatorGUI,bases,genSeven_DOORS,medTwoCapGui,medTwoCurrentFloorGui,leftWall,rightWall,errorDisplay);
+                        me2.setMedicalElevatorTwoCall(false);
+                    }
                     break;
                 case 8:
+                    if(me3.isMedicalElevatorThreeCall()){
+                        
+                        elevatorCurrentFloors[7] = 0;
+                        medThreeCapGui.setText("0/4");
+                        medThreeCurrentFloorGui.setText("0");
+                        me3.upRequests(getFloors(),elevatorCurrentFloors,elevatorGUI,bases,genEight_DOORS,medThreeCapGui,medThreeCurrentFloorGui,leftWall,rightWall,errorDisplay);
+                        me3.setMedicalElevatorThreeCall(false);
+                    }
                     break;
                 default:
                     System.out.println("No Elevator Exist");
@@ -937,26 +1171,76 @@ public class PrimaryController extends TrafficGenerator{
     private void statsBtn(ActionEvent event) {
        
         try {
-             FXMLLoader loader = new FXMLLoader(getClass().getResource("StatsKeeperPopUp.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("StatsKeeperPopUp.fxml"));
             Parent popupContent;
             popupContent = loader.load();
             Stage popupStage = new Stage();
 
             popupStage.setScene(new Scene(popupContent));
             popupStage.initModality(Modality.APPLICATION_MODAL);
-            double popupWidth = 700; 
-            double popupHeight = 425; 
+            double popupWidth = 620; 
+            double popupHeight = 500; 
 
             popupStage.setWidth(popupWidth);
             popupStage.setHeight(popupHeight);
+            popupStage.setResizable(false);
             popupStage.show();
+            
+            skGUI = loader.getController();
+            sk.displayTopTenTravelTime(skGUI.getLabelList());
+            
+            System.out.println("Displaying StatisticKeeper");
+            
+            
+        
+            sk.barChart(skGUI.getPassengerAmountChart());
+            
         } catch (Exception e) {
             System.out.println("NO fxml file exist");
+            e.printStackTrace();
         }
 
     
 
     }
+
+    @FXML
+    private void clearDataBtn(ActionEvent event) {
+        
+        boolean databaseCheck = sk.clearDB(false);
+        fade.setNode(errorDisplay);
+        errorDisplay.toFront();
+        if(databaseCheck){
+            
+                    errorDisplay.setText("Data has been Cleared...");
+                    errorDisplay.setStyle("-fx-text-fill: #46e38f");
+                    idCounter= 0;
+                    fade.setDuration(Duration.seconds(2));
+                    fade.setCycleCount(1);
+                    fade.setInterpolator(Interpolator.LINEAR);
+                    fade.setFromValue(1);
+                    fade.setToValue(0);
+                    fade.play();
+            
+        }else{
+            
+                    errorDisplay.setText("Error Deleteing Data...");
+                    errorDisplay.setStyle("-fx-text-fill: #fc3d03");
+                    
+                    fade.setDuration(Duration.seconds(2));
+                    fade.setCycleCount(1);
+                    fade.setInterpolator(Interpolator.LINEAR);
+                    fade.setFromValue(1);
+                    fade.setToValue(0);
+                    fade.play();
+            
+        }
+        
+        
+        
+    }
+    
+    
 
 
 }

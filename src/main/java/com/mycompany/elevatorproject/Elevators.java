@@ -38,6 +38,12 @@ import javafx.scene.shape.Rectangle;
         max_floors = 8;
         generalElevatorOneCall = true;
         generalElevatorTwoCall = true;
+        generalElevatorThreeCall = true;
+        generalElevatorFourCall = true;
+        generalElevatorFiveCall = true;
+        medicalElevatorOneCall = true;
+        medicalElevatorTwoCall = true;
+        medicalElevatorThreeCall = true;
        
     }
     
@@ -177,7 +183,7 @@ import javafx.scene.shape.Rectangle;
         this.medicalElevatorThreeCall = medicalElevatorThreeCall;
     }
     
-    abstract public void upRequests(ArrayList<ArrayList<Passengers>> floors,int[] cf,ArrayList<Rectangle> genElev,ArrayList<Rectangle> bases,ArrayList<Rectangle> genDOORS, Label capacityGUI, Label currentFloorGUI,Rectangle lWall, Rectangle rWall);
-    abstract public void elevatorRequestCheck(ArrayList<ArrayList<Passengers>> floors,int[] cf,ArrayList<Rectangle> genElev,ArrayList<Rectangle> bases,ArrayList<Rectangle> genDOORS, Label capacityGUI, Label currentFloorGUI,Rectangle lWall, Rectangle rWall);
-    abstract public void downRequests(ArrayList<ArrayList<Passengers>> floors,int[] cf,ArrayList<Rectangle> genElev,ArrayList<Rectangle> bases,ArrayList<Rectangle> genDOORS, Label capacityGUI, Label currentFloorGUI,Rectangle lWall, Rectangle rWall);
+    abstract public void upRequests(ArrayList<ArrayList<Passengers>> floors,int[] cf,ArrayList<Rectangle> genElev,ArrayList<Rectangle> bases,ArrayList<Rectangle> genDOORS, Label capacityGUI, Label currentFloorGUI,Rectangle lWall, Rectangle rWall,Label errorDisplayGUI);
+    abstract public void elevatorRequestCheck(ArrayList<ArrayList<Passengers>> floors,int[] cf,ArrayList<Rectangle> genElev,ArrayList<Rectangle> bases,ArrayList<Rectangle> genDOORS, Label capacityGUI, Label currentFloorGUI,Rectangle lWall, Rectangle rWall,Label errorDisplayGUI);
+    abstract public void downRequests(ArrayList<ArrayList<Passengers>> floors,int[] cf,ArrayList<Rectangle> genElev,ArrayList<Rectangle> bases,ArrayList<Rectangle> genDOORS, Label capacityGUI, Label currentFloorGUI,Rectangle lWall, Rectangle rWall,Label errorDisplayGUI);
 }
